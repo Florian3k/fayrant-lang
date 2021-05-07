@@ -52,7 +52,7 @@ expression = literalExpression | groupingExpression | unaryExpression | binaryEx
 
 groupingExpression = "(" expression ")"
 
-literalExpression = NUMBER | STRING | BOOLEAN
+literalExpression = NUMBER | STRING | BOOLEAN | NULL
 
 unaryExpression = "-" expression
                 | "!" expression
@@ -108,3 +108,5 @@ ESCAPE_SEQUENCE = "\\" ESCAPE_CONTENT
 ESCAPE_CONTENT  = "r" | "n" | "\\" | "\"" | "{" | "}" | ( "u{" UNICODE_CODE "}" )
 
 BOOLEAN = "true" | "false"
+
+NULL = null
