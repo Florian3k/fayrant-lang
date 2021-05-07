@@ -1,0 +1,110 @@
+
+program = { statement }
+
+
+statement = globalStatement | localStatement
+
+globalStatement = functionDeclaration | classDeclaration | localStatement
+
+localStatement = ifStatement | whileStatement | forStatement | variableStatement | assignmentStatement | returnStatement | expressionStatement
+
+
+anyBody = "{" { localStatement } "}"
+
+
+functionDeclaration = "func" IDENTIFIER "(" paramsList ")" anyBody
+
+paramsList = [ IDENTIFIER { "," IDENTIFIER } ]
+
+
+classDeclaration = "class" IDENTIFIER "{" classStatement "}"
+
+classStatement = constructorDeclaration | methodDeclaration
+
+constructorDeclaration = "constructor" "(" paramsList ")" anyBody
+
+methodDeclaration = functionDeclaration
+
+
+ifStatement = "if" "(" expression ")" anyBody [ "else" anyBody ]
+
+whileStatement = "while" "(" expression ")" anyBody
+
+forInit = variableStatement | assignmentStatement | ( expression ";" )
+forIncrement = assignmentStatementNoSemicolon | expression
+forStatement = "for" "(" forInit  expression ";" forIncrement ")" anyBody
+
+variableStatement = "var" IDENTIFIER "=" expression ";"
+
+assignmentStatement = assignmentStatementNoSemicolon ";"
+assignmentStatementNoSemicolon = IDENTIFIER ASSIGNMENT_OP expression
+
+ASSIGNMENT_OP = "=" | "+=" | "-=" | "*=" | "/=" | "\\=" | "%=" | "^=" | "&=" | "|=" | "++=" |
+
+
+returnStatement = "return" [ expression ] ";"
+
+
+expressionStatement = expression ";"
+
+
+expression = literalExpression | groupingExpression | unaryExpression | binaryExpression | functionCallExpression
+
+groupingExpression = "(" expression ")"
+
+literalExpression = NUMBER | STRING | BOOLEAN
+
+unaryExpression = "-" expression
+                | "!" expression
+                | "@" expression
+                | "#" expression
+
+binaryExpression = expression "+" expression # number, number -> number
+                 | expression "-" expression
+                 | expression "*" expression
+                 | expression "/" expression
+                 | expression "\\" expression
+                 | expression "%" expression
+                 | expression "^" expression
+                 | expression "&" expression # boolean, boolean -> boolean
+                 | expression "|" expression
+                 | expression ">" expression # number, number -> boolean
+                 | expression "<" expression
+                 | expression "<=" expression
+                 | expression ">=" expression
+                 | expression "==" expression
+                 | expression "!=" expression
+                 | expression "++" expression # string, string -> string
+
+functionCallExpression = expression "(" callParamsList ")"
+
+callParamsList = [ expression { "," expression } ]
+
+
+IDENTIFIER = ID_ALPHA { (ID_ALPHA | ID_ALPHANUM | ID_EMOJI) }
+ID_ALPHA = LETTER | "_"
+ID_ALPHANUM = ID_ALPHA | DIGIT
+ID_EMOJI = ANY_UNICODE_EMOJI
+
+NUMBER = NUMBER_2 | NUMBER_10 | NUMBER_16
+
+NUMBER_2 = "0b" NUMBER_2
+NUMBER_10 = DIGIT_10 { DIGIT_10 } [ "." DIGIT_10 { DIGIT_10 } ]
+NUMBER_16 = "0x" DIGIT_16 { DIGIT_16 }
+
+DIGIT_2  = "0" | "1"
+DIGIT_10 = DIGIT_2 | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+DIGIT_16 = DIGIT_10 | "a" | "b" | "c" | "d" | "e" | "f" | "A" | "B" | "C" | "D" | "E" | "F"
+
+STRING = "\"" STRING_ELEM "\""
+
+STRING_ELEM = ALLOWED_CHARACTER | INTERPOLATION | ESCAPE_SEQUENCE
+
+ALLOWED_CHARACTER = ... # any unicode character except for: \ " { }
+
+INTERPOLATION = "{" expression "}"
+
+ESCAPE_SEQUENCE = "\\" ESCAPE_CONTENT
+ESCAPE_CONTENT  = "r" | "n" | "\\" | "\"" | "{" | "}" | ( "u{" UNICODE_CODE "}" )
+
+BOOLEAN = "true" | "false"
