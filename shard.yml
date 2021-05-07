@@ -1,0 +1,13 @@
+name: fayrant-lang
+version: 0.1.0
+
+authors:
+  - your-name-here <your-email-here>
+
+targets:
+  fayrant-lang:
+    main: src/fayrant-lang.cr
+
+crystal: 1.0.0
+
+license: MIT

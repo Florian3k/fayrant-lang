@@ -1,0 +1,8 @@
+.vscode/
+.idea/
+
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
