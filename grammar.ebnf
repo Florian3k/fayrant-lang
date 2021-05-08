@@ -48,7 +48,7 @@ returnStatement = "return" [ expression ] ";"
 expressionStatement = expression ";"
 
 
-expression = literalExpression | groupingExpression | unaryExpression | binaryExpression | functionCallExpression
+expression = literalExpression | groupingExpression | unaryExpression | binaryExpression | functionCallExpression | objectAccessExpression
 
 groupingExpression = "(" expression ")"
 
@@ -79,6 +79,8 @@ binaryExpression = expression "+" expression # number, number -> number
 functionCallExpression = expression "(" callParamsList ")"
 
 callParamsList = [ expression { "," expression } ]
+
+objectAccessExpression = expression "." IDENTIFIER
 
 
 IDENTIFIER = ID_ALPHA { (ID_ALPHA | ID_ALPHANUM | ID_EMOJI) }
