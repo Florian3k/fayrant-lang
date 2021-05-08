@@ -37,7 +37,7 @@ forStatement = "for" "(" forInit  expression ";" forIncrement ")" anyBody
 variableStatement = "var" IDENTIFIER "=" expression ";"
 
 assignmentStatement = assignmentStatementNoSemicolon ";"
-assignmentStatementNoSemicolon = IDENTIFIER ASSIGNMENT_OP expression
+assignmentStatementNoSemicolon = IDENTIFIER { "." IDENTIFIER } ASSIGNMENT_OP expression
 
 ASSIGNMENT_OP = "=" | "+=" | "-=" | "*=" | "/=" | "\\=" | "%=" | "^=" | "&=" | "|=" | "++=" |
 
