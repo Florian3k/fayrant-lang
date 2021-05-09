@@ -1,10 +1,9 @@
 require "spec"
-require "../../src/interpreter/value.cr"
+require "../src/value.cr"
 
-include FayrantLang::Interpreter::Values
-include FayrantLang::Interpreter::Exceptions
+include FayrantLang
 
-describe FayrantLang::Interpreter::Values do
+describe "FayrantLang Values" do
   describe "VoidValue" do
     it ".get* should throw ValueError" do
       expect_raises(ValueError, "ValueError: expected type Boolean, instead got Void") do
