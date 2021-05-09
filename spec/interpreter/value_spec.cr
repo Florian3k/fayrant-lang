@@ -75,16 +75,59 @@ describe FayrantLang::Interpreter::Values do
     end
   end
 
+  describe "ObjectValue" do
+    it ".getObject should return the object itself" do
+      obj = ObjectValue.new "SomeClass"
+      (obj.getObject == obj).should eq true
+    end
+
+    it ".type should return Object type" do
+      obj = ObjectValue.new "SomeClass"
+      obj.type.should eq "Object"
+    end
+
+    it "Object should be equal only to itself" do
+      obj1 = ObjectValue.new "SomeClass"
+      obj2 = ObjectValue.new "SomeClass"
+      (obj1 == obj1).should eq true
+      (obj2 == obj2).should eq true
+      (obj1 == obj2).should eq false
+    end
+  end
+
   describe "BuiltinFunction" do
+    it ".getFunction should return the function itself" do
+      fn = BuiltinFunction.new 0 do |args|
+        VoidValue.new
+      end
+      (fn.getFunction == fn).should eq true
+    end
+
+    it "Function should be equal only to itself" do
+      fn1 = BuiltinFunction.new 0 do |args|
+        VoidValue.new
+      end
+      fn2 = BuiltinFunction.new 0 do |args|
+        VoidValue.new
+      end
+      (fn1 == fn1).should eq true
+      (fn2 == fn2).should eq true
+      (fn1 == fn2).should eq false
+    end
+
     it ".call should return correct value" do
-      fn = BuiltinFunction.new 1 do |args| NumberValue.new(args[0].getNumber + 7) end
+      fn = BuiltinFunction.new 1 do |args|
+        NumberValue.new(args[0].getNumber + 7)
+      end
       ret = fn.call([NumberValue.new 6] of AnyValue)
       (ret == NumberValue.new 13).should eq true
       (ret == NumberValue.new 14).should eq false
     end
 
     it ".call should throw on arity mismatch" do
-      fn = BuiltinFunction.new 1 do |args| NumberValue.new(args[0].getNumber + 7) end
+      fn = BuiltinFunction.new 1 do |args|
+        NumberValue.new(args[0].getNumber + 7)
+      end
       expect_raises(ArityMismatchError, "ArityMismatchError: expected 1 arguments, instead got 0") do
         ret = fn.call([] of AnyValue)
       end

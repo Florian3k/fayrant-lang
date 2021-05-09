@@ -1,3 +1,4 @@
+require "uuid"
 require "./exceptions"
 
 module FayrantLang
@@ -54,6 +55,7 @@ module FayrantLang
 
       class BooleanValue < AnyValue
         getter value
+
         def initialize(@value : Bool)
           super "Boolean"
         end
@@ -73,6 +75,7 @@ module FayrantLang
 
       class NumberValue < AnyValue
         getter value
+
         def initialize(@value : Float64)
           super "Number"
         end
@@ -92,6 +95,7 @@ module FayrantLang
 
       class StringValue < AnyValue
         getter value
+
         def initialize(@value : String)
           super "String"
         end
@@ -111,10 +115,12 @@ module FayrantLang
 
       class ObjectValue < AnyValue
         getter fields
+        getter uuid
 
         def initialize(@classType : String)
           super "Object"
           @fields = Hash(String, AnyValue).new
+          @uuid = UUID.random
         end
 
         def toString
@@ -124,11 +130,19 @@ module FayrantLang
         def getObject
           self
         end
+
+        def ==(other : ObjectValue)
+          uuid == other.uuid
+        end
       end
 
       abstract class FunctionValue < AnyValue
+        getter arity
+        getter uuid
+
         def initialize(@arity : Int32)
           super "Function"
+          @uuid = UUID.random
         end
 
         def getFunction
@@ -137,6 +151,10 @@ module FayrantLang
 
         def toString
           "[Function]"
+        end
+
+        def ==(other : FunctionValue)
+          uuid == other.uuid
         end
 
         abstract def call(args : Array(AnyValue)) : AnyValue

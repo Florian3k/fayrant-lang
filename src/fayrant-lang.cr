@@ -1,4 +1,3 @@
-
 case ARGV.size
 when 0
   puts "Running REPL..."
