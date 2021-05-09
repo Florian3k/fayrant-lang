@@ -35,16 +35,16 @@ module FayrantLang
     end
   end
 
-  class VoidValue < AnyValue
+  class NullValue < AnyValue
     def initialize
-      super "Void"
+      super "Null"
     end
 
     def toString
-      "void"
+      "null"
     end
 
-    def ==(other : VoidValue)
+    def ==(other : NullValue)
       true
     end
   end
@@ -162,7 +162,7 @@ module FayrantLang
     end
 
     def call(args : Array(AnyValue)) : AnyValue
-      VoidValue.new # TODO
+      NullValue.new # TODO
     end
   end
 
@@ -172,7 +172,7 @@ module FayrantLang
     end
 
     def call(args : Array(AnyValue)) : AnyValue
-      VoidValue.new # TODO
+      NullValue.new # TODO
     end
   end
 

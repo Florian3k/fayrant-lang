@@ -4,26 +4,26 @@ require "../src/value.cr"
 include FayrantLang
 
 describe "FayrantLang Values" do
-  describe "VoidValue" do
+  describe "NullValue" do
     it ".get* should throw ValueError" do
-      expect_raises(ValueError, "ValueError: expected type Boolean, instead got Void") do
-        VoidValue.new.getBoolean
+      expect_raises(ValueError, "ValueError: expected type Boolean, instead got Null") do
+        NullValue.new.getBoolean
       end
 
-      expect_raises(ValueError, "ValueError: expected type Number, instead got Void") do
-        VoidValue.new.getNumber
+      expect_raises(ValueError, "ValueError: expected type Number, instead got Null") do
+        NullValue.new.getNumber
       end
 
-      expect_raises(ValueError, "ValueError: expected type String, instead got Void") do
-        VoidValue.new.getString
+      expect_raises(ValueError, "ValueError: expected type String, instead got Null") do
+        NullValue.new.getString
       end
 
-      expect_raises(ValueError, "ValueError: expected type Object, instead got Void") do
-        VoidValue.new.getObject
+      expect_raises(ValueError, "ValueError: expected type Object, instead got Null") do
+        NullValue.new.getObject
       end
 
-      expect_raises(ValueError, "ValueError: expected type Function, instead got Void") do
-        VoidValue.new.getFunction
+      expect_raises(ValueError, "ValueError: expected type Function, instead got Null") do
+        NullValue.new.getFunction
       end
     end
   end
@@ -97,17 +97,17 @@ describe "FayrantLang Values" do
   describe "BuiltinFunction" do
     it ".getFunction should return the function itself" do
       fn = BuiltinFunction.new 0 do |args|
-        VoidValue.new
+        NullValue.new
       end
       (fn.getFunction == fn).should eq true
     end
 
     it "Function should be equal only to itself" do
       fn1 = BuiltinFunction.new 0 do |args|
-        VoidValue.new
+        NullValue.new
       end
       fn2 = BuiltinFunction.new 0 do |args|
-        VoidValue.new
+        NullValue.new
       end
       (fn1 == fn1).should eq true
       (fn2 == fn2).should eq true
