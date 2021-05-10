@@ -1,12 +1,21 @@
-
+# Entrypoint
 program = { statement }
 
 
-statement = globalStatement | localStatement
+statement = globalStatement
+          | localStatement
 
-globalStatement = functionDeclaration | classDeclaration | localStatement
+globalStatement = functionDeclaration
+                | classDeclaration
+                | localStatement
 
-localStatement = ifStatement | whileStatement | forStatement | variableStatement | assignmentStatement | returnStatement | expressionStatement
+localStatement = ifStatement
+               | whileStatement
+               | forStatement
+               | variableStatement
+               | assignmentStatement
+               | returnStatement
+               | expressionStatement
 
 
 anyBody = "{" { localStatement } "}"
@@ -26,13 +35,22 @@ methodDeclaration = functionDeclaration
 
 ifStatement = "if" "(" expression ")" anyBody [ "else" anyBody ]
 
+
 whileStatement = "while" "(" expression ")" anyBody
 
-forInit = variableStatement | assignmentStatement | ( expression ";" )
-forIncrement = assignmentStatementNoSemicolon | expression
+
+forInit = variableStatement
+        | assignmentStatement
+        | expressionStatement
+
+forIncrement = assignmentStatementNoSemicolon
+             | expression
+
 forStatement = "for" "(" forInit  expression ";" forIncrement ")" anyBody
 
+
 variableStatement = "var" IDENTIFIER "=" expression ";"
+
 
 assignmentStatement = assignmentStatementNoSemicolon ";"
 assignmentStatementNoSemicolon = IDENTIFIER { "." IDENTIFIER } ASSIGNMENT_OP expression
@@ -46,7 +64,12 @@ returnStatement = "return" [ expression ] ";"
 expressionStatement = expression ";"
 
 
-expression = literalExpression | groupingExpression | unaryExpression | binaryExpression | functionCallExpression | objectAccessExpression
+expression = literalExpression
+           | groupingExpression
+           | unaryExpression
+           | binaryExpression
+           | functionCallExpression
+           | objectAccessExpression
 
 groupingExpression = "(" expression ")"
 
@@ -81,15 +104,14 @@ callParamsList = [ expression { "," expression } ]
 objectAccessExpression = expression "." IDENTIFIER
 
 
-IDENTIFIER = ID_ALPHA { (ID_ALPHA | ID_ALPHANUM | ID_EMOJI) }
+IDENTIFIER = ID_ALPHA { (ID_ALPHA | DIGIT_10 | ANY_UNICODE_EMOJI) }
 ID_ALPHA = LETTER | "_"
-ID_ALPHANUM = ID_ALPHA | DIGIT
-ID_EMOJI = ANY_UNICODE_EMOJI
 
 NUMBER = NUMBER_2 | NUMBER_10 | NUMBER_16
 
-NUMBER_2 = "0b" NUMBER_2
-NUMBER_10 = DIGIT_10 { DIGIT_10 } [ "." DIGIT_10 { DIGIT_10 } ]
+NUMBER_2 = "0b" DIGIT_2 { DIGIT_2 }
+NUMBER_10 = NUMBER_10_INT [ "." NUMBER_10_INT ]
+NUMBER_10_INT = DIGIT_10 { DIGIT_10 }
 NUMBER_16 = "0x" DIGIT_16 { DIGIT_16 }
 
 DIGIT_2  = "0" | "1"
@@ -105,7 +127,8 @@ ALLOWED_CHARACTER = ... # any unicode character except for: \ " { }
 INTERPOLATION = "{" expression "}"
 
 ESCAPE_SEQUENCE = "\\" ESCAPE_CONTENT
-ESCAPE_CONTENT  = "r" | "n" | "\\" | "\"" | "{" | "}" | ( "u{" UNICODE_CODE "}" )
+ESCAPE_CONTENT  = "r" | "n" | "\\" | "\"" | "{" | "}"
+                | ( "u{" ( NUMBER_2 | NUMBER_10_INT | NUMBER_16 ) "}" )
 
 BOOLEAN = "true" | "false"
 
