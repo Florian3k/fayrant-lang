@@ -39,7 +39,7 @@ describe "FayrantLang Values" do
 
     it ".type should return Boolean type" do
       bool = BooleanValue.new true
-      bool.type.should eq "Boolean"
+      bool.type.should eq ValueType::Boolean
     end
 
     it ".getNumber should throw ValueError" do
@@ -58,7 +58,7 @@ describe "FayrantLang Values" do
 
     it ".type should return Number type" do
       num = NumberValue.new 7
-      num.type.should eq "Number"
+      num.type.should eq ValueType::Number
     end
   end
 
@@ -70,7 +70,7 @@ describe "FayrantLang Values" do
 
     it ".type should return String type" do
       str = StringValue.new "testing"
-      str.type.should eq "String"
+      str.type.should eq ValueType::String
     end
   end
 
@@ -82,7 +82,7 @@ describe "FayrantLang Values" do
 
     it ".type should return Object type" do
       obj = ObjectValue.new "SomeClass"
-      obj.type.should eq "Object"
+      obj.type.should eq ValueType::Object
     end
 
     it "Object should be equal only to itself" do

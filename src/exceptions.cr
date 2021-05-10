@@ -1,6 +1,8 @@
+require "./value.cr"
+
 module FayrantLang
   class ValueError < Exception
-    def initialize(@expected : String, @actual : String)
+    def initialize(@expected : ValueType, @actual : ValueType)
       super "ValueError: expected type #{@expected}, instead got #{@actual}"
     end
   end

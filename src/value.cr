@@ -2,32 +2,41 @@ require "uuid"
 require "./exceptions"
 
 module FayrantLang
+  enum ValueType
+    Null
+    Boolean
+    Number
+    String
+    Object
+    Function
+  end
+
   abstract class AnyValue
     getter type
 
-    def initialize(@type : String)
+    def initialize(@type : ValueType)
     end
 
     abstract def toString
 
     def getBoolean : Bool
-      raise ValueError.new "Boolean", @type
+      raise ValueError.new ValueType::Boolean, @type
     end
 
     def getNumber : Float64
-      raise ValueError.new "Number", @type
+      raise ValueError.new ValueType::Number, @type
     end
 
     def getString : String
-      raise ValueError.new "String", @type
+      raise ValueError.new ValueType::String, @type
     end
 
     def getObject : ObjectValue
-      raise ValueError.new "Object", @type
+      raise ValueError.new ValueType::Object, @type
     end
 
     def getFunction : FunctionValue
-      raise ValueError.new "Function", @type
+      raise ValueError.new ValueType::Function, @type
     end
 
     def ==(other)
@@ -37,7 +46,7 @@ module FayrantLang
 
   class NullValue < AnyValue
     def initialize
-      super "Null"
+      super ValueType::Null
     end
 
     def toString
@@ -53,7 +62,7 @@ module FayrantLang
     getter value
 
     def initialize(@value : Bool)
-      super "Boolean"
+      super ValueType::Boolean
     end
 
     def toString
@@ -73,7 +82,7 @@ module FayrantLang
     getter value
 
     def initialize(@value : Float64)
-      super "Number"
+      super ValueType::Number
     end
 
     def toString
@@ -93,7 +102,7 @@ module FayrantLang
     getter value
 
     def initialize(@value : String)
-      super "String"
+      super ValueType::String
     end
 
     def toString
@@ -114,7 +123,7 @@ module FayrantLang
     getter uuid
 
     def initialize(@classType : String)
-      super "Object"
+      super ValueType::Object
       @fields = Hash(String, AnyValue).new
       @uuid = UUID.random
     end
@@ -137,7 +146,7 @@ module FayrantLang
     getter uuid
 
     def initialize(@arity : Int32)
-      super "Function"
+      super ValueType::Function
       @uuid = UUID.random
     end
 
