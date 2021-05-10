@@ -75,27 +75,13 @@ groupingExpression = "(" expression ")"
 
 literalExpression = NUMBER | STRING | BOOLEAN | NULL
 
-unaryExpression = "-" expression
-                | "!" expression
-                | "@" expression
-                | "#" expression
+unaryExpression = UN_OP expression
 
-binaryExpression = expression "+" expression # number, number -> number
-                 | expression "-" expression
-                 | expression "*" expression
-                 | expression "/" expression
-                 | expression "\\" expression
-                 | expression "%" expression
-                 | expression "^" expression
-                 | expression "&" expression # boolean, boolean -> boolean
-                 | expression "|" expression
-                 | expression ">" expression # number, number -> boolean
-                 | expression "<" expression
-                 | expression "<=" expression
-                 | expression ">=" expression
-                 | expression "==" expression
-                 | expression "!=" expression
-                 | expression "++" expression # string, string -> string
+UN_OP = "-" | "!" | "@" | "#"
+
+binaryExpression = expression BIN_OP expression
+
+BIN_OP = "+" | "-" | "*" | "/" | "\\" | "%" | "^" | "&" | "|" | ">" | "<" | "<=" | ">=" | "==" | "!=" | "++"
 
 functionCallExpression = expression "(" callParamsList ")"
 
