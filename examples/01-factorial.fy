@@ -22,5 +22,5 @@ if (x == null | x < 1) {
   print("Invalid number");
   return;
 }
-print("Iter: {factorial_iter(x)}")
-print("Rec: {factorial_rec(x)}")
+print("Iter: {factorial_iter(x)}");
+print("Rec: {factorial_rec(x)}");
