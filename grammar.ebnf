@@ -17,9 +17,7 @@ functionDeclaration = "func" IDENTIFIER "(" paramsList ")" anyBody
 paramsList = [ IDENTIFIER { "," IDENTIFIER } ]
 
 
-classDeclaration = "class" IDENTIFIER "{" classStatement "}"
-
-classStatement = constructorDeclaration | methodDeclaration
+classDeclaration = "class" IDENTIFIER "{" constructorDeclaration { methodDeclaration } "}"
 
 constructorDeclaration = "constructor" "(" paramsList ")" anyBody
 
