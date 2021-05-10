@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "spec"
 
 describe FayrantLang do
   # TODO: Write tests
