@@ -65,11 +65,14 @@ expressionStatement = expression ";"
 
 
 expression = literalExpression
+           | variableExpression
            | groupingExpression
            | unaryExpression
            | binaryExpression
            | functionCallExpression
            | objectAccessExpression
+
+variableExpression = IDENTIFIER
 
 groupingExpression = "(" expression ")"
 
