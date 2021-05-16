@@ -8,10 +8,10 @@ describe "FayrantLang Lexer" do
   # - add more tests
   # - group and refactor them
 
-  it "should tokenize 'var test = 2 + 2;'" do
-    input = "var test = 2 + 3;"
+  it "should tokenize 'var test = 2 + 3.14;'" do
+    input = "var test = 2 + 3.14;"
     #        0123456789
-    #                  0123456
+    #                  0123456789
     result = Lexer.new(input).scan_tokens
     expected = [
       Token.new(TokenType::VAR, "var", Location.new 1, 0, 2),
@@ -19,8 +19,8 @@ describe "FayrantLang Lexer" do
       Token.new(TokenType::EQUAL, "=", Location.new 1, 9, 9),
       Token.new(TokenType::NUMBER, "2", Location.new 1, 11, 11),
       Token.new(TokenType::OP_PLUS, "+", Location.new 1, 13, 13),
-      Token.new(TokenType::NUMBER, "3", Location.new 1, 15, 15),
-      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 16, 16),
+      Token.new(TokenType::NUMBER, "3.14", Location.new 1, 15, 18),
+      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 19, 19),
     ]
     result.zip?(expected) do |res, exp|
       res.should eq exp
