@@ -106,16 +106,16 @@ describe "FayrantLang Lexer" do
     end
   end
 
-  it "should tokenize '\"test\\u{65}\";'" do
-    input = "\"test\\u{65}\";"
-    #         01234 56789
-    #                    0 12
+  it "should tokenize '\"test\\u{65}\\u{0x41}\";'" do
+    input = "\"test\\u{65}\\u{0x41}\";"
+    #         01234 56789            0
+    #                    0 12345678 9
     # result = Lexer.new(input).scan_tokens
     expected = [
       Token.new(TokenType::QUOTE, "\"", Location.new 1, 0, 0),
-      Token.new(TokenType::STRING_FRAGMENT, "testA", Location.new 1, 1, 10),
-      Token.new(TokenType::QUOTE, "\"", Location.new 1, 11, 11),
-      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 12, 12),
+      Token.new(TokenType::STRING_FRAGMENT, "testAA", Location.new 1, 1, 18),
+      Token.new(TokenType::QUOTE, "\"", Location.new 1, 19, 19),
+      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 20, 20),
     ]
     # result.zip?(expected) do |res, exp|
     #   res.should eq exp
