@@ -37,7 +37,7 @@ describe "FayrantLang Lexer" do
       Token.new(TokenType::NUMBER, "2", Location.new 1, 1, 1),
       Token.new(TokenType::OP_PLUS, "+", Location.new 1, 3, 3),
       Token.new(TokenType::NUMBER, "2", Location.new 1, 5, 5),
-      Token.new(TokenType::R_PAREN, ")", Location.new 1, 6, 6),      
+      Token.new(TokenType::R_PAREN, ")", Location.new 1, 6, 6),
       Token.new(TokenType::OP_CONCAT, "++", Location.new 1, 8, 9),
       Token.new(TokenType::NUMBER, "0xDEADBEEF", Location.new 1, 11, 20),
       Token.new(TokenType::SEMICOLON, ";", Location.new 1, 21, 21),
@@ -64,15 +64,15 @@ describe "FayrantLang Lexer" do
     end
   end
 
-  it "should tokenize '\"te\\st\";'" do
-    input = "\"te\\nst\";"
-    #         012 3456 78
+  it "should tokenize '\"te\\n\\\\st\";'" do
+    input = "\"te\\n\\\\st\";"
+    #         012 34 5 678 90
     result = Lexer.new(input).scan_tokens
     expected = [
       Token.new(TokenType::QUOTE, "\"", Location.new 1, 0, 0),
-      Token.new(TokenType::STRING_FRAGMENT, "te\nst", Location.new 1, 1, 6),
-      Token.new(TokenType::QUOTE, "\"", Location.new 1, 7, 7),
-      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 8, 8),
+      Token.new(TokenType::STRING_FRAGMENT, "te\n\\st", Location.new 1, 1, 8),
+      Token.new(TokenType::QUOTE, "\"", Location.new 1, 9, 9),
+      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 10, 10),
     ]
     result.zip?(expected) do |res, exp|
       res.should eq exp
