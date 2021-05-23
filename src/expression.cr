@@ -33,5 +33,19 @@ module FayrantLang
         end
       end
 
+      class NumberLiteralExpr < LiteralExpr(Float64)
+        getter value
+  
+        def initialize(value : Float64)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          NumberValue.new @value
+        end
+      end
+
+      
+
   end
 end
