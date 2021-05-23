@@ -21,8 +21,17 @@ module FayrantLang
         end
     end
 
-    
-
+    class BooleanLiteralExpr < LiteralExpr(Bool)
+        getter value
+  
+        def initialize(value : Bool)
+          super
+        end
+  
+        def eval(env) : BooleanValue
+          BooleanValue.new @value
+        end
+      end
 
   end
 end
