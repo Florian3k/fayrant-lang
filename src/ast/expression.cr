@@ -12,7 +12,7 @@ module FayrantLang
 
     abstract class LiteralExpr(T) < Expr
         getter value
-  
+
         def initialize(@value : T)
         end
   
@@ -22,8 +22,6 @@ module FayrantLang
     end
 
     class BooleanLiteralExpr < LiteralExpr(Bool)
-        getter value
-  
         def initialize(value : Bool)
           super
         end
@@ -34,8 +32,6 @@ module FayrantLang
       end
 
       class NumberLiteralExpr < LiteralExpr(Float64)
-        getter value
-  
         def initialize(value : Float64)
           super
         end
@@ -45,7 +41,17 @@ module FayrantLang
         end
       end
 
-      
+      class NullLiteralExpr < LiteralExpr(Nil)
+        def initialize(value : Nil = nil)
+          super
+        end
+  
+        def eval(env) : NullValue
+          NullValue.new
+        end
+      end
 
+
+      # TODO : Implement string literals 
   end
 end
