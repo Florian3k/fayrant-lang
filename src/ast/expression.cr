@@ -103,6 +103,7 @@ module FayrantLang
         end
       end
 
+      # ?????
       class UnaryExprToNumber < UnaryExpr
         def initialize(expr : Expr)
           super
@@ -127,15 +128,68 @@ module FayrantLang
         end
       end
   
+      class BinaryExprPlus < BinaryExpr
+        def initialize(lhs : Expr, rhs : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          NumberValue.new @lhs.eval(env).getNumber + @rhs.eval(env).getNumber
+        end
+  
+        def ==(other : BinaryExprPlus)
+          lhs == other.lhs && rhs == other.rhs
+        end
+      end
 
+      class BinaryExprMinus < BinaryExpr
+        def initialize(lhs : Expr, rhs : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          NumberValue.new @lhs.eval(env).getNumber - @rhs.eval(env).getNumber
+        end
+  
+        def ==(other : BinaryExprPlus)
+          lhs == other.lhs && rhs == other.rhs
+        end
+      end
 
-      # repeat above for:
-    #   -  (Minus)    Number x Number  -> Number
-    #   *  (Times)    Number x Number  -> Number
+      class BinaryExprTimes < BinaryExpr
+        def initialize(lhs : Expr, rhs : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          NumberValue.new @lhs.eval(env).getNumber * @rhs.eval(env).getNumber
+        end
+  
+        def ==(other : BinaryExprPlus)
+          lhs == other.lhs && rhs == other.rhs
+        end
+      end
+
+      # TODO: Make sure we have a consistent view on handling arithmetic expressions and implement div and mod:
+
     #   /  (Div)      Number x Number  -> Number
     #   \  (DivInv)   Number x Number  -> Number
     #   %  (Mod)      Number x Number  -> Number
-    #   ^  (Expt)     Number x Number  -> Number
+
+    class BinaryExprExpt < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : NumberValue
+        NumberValue.new @lhs.eval(env).getNumber ** @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
     #   &  (And)      Number x Number  -> Number
     #   |  (Or)      Boolean x Boolean -> Boolean
     #   >  (Gt)       Number x Number  -> Boolean
