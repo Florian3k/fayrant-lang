@@ -53,5 +53,28 @@ module FayrantLang
 
 
       # TODO : Implement string literals 
+
+      abstract class UnaryExpr < Expr
+        getter expr
+  
+        def initialize(@expr : Expr)
+        end
+      end
+  
+      class UnaryExprMinus < UnaryExpr
+        def initialize(expr : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          NumberValue.new -@expr.eval(env).getNumber
+        end
+  
+        def ==(other : UnaryExprMinus)
+          expr == other.expr
+        end
+      end
+
+      
   end
 end
