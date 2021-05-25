@@ -119,7 +119,32 @@ module FayrantLang
 
       # TODO: (UnaryExprToNumber)     Any -> Number (Any means bool, number or string in this context)
 
-      
+      abstract class BinaryExpr < Expr
+        getter lhs
+        getter rhs
+  
+        def initialize(@lhs : Expr, @rhs : Expr)
+        end
+      end
+  
+
+
+      # repeat above for:
+    #   -  (Minus)    Number x Number  -> Number
+    #   *  (Times)    Number x Number  -> Number
+    #   /  (Div)      Number x Number  -> Number
+    #   \  (DivInv)   Number x Number  -> Number
+    #   %  (Mod)      Number x Number  -> Number
+    #   ^  (Expt)     Number x Number  -> Number
+    #   &  (And)      Number x Number  -> Number
+    #   |  (Or)      Boolean x Boolean -> Boolean
+    #   >  (Gt)       Number x Number  -> Boolean
+    #   <  (Lt)       Number x Number  -> Boolean
+    #   <= (Le)       Number x Number  -> Boolean
+    #   >= (Ge)       Number x Number  -> Boolean
+    #   == (Eq)          Any x Any     -> Boolean (compare values using ==)
+    #   != (Neq)         Any x Any     -> Boolean (as above)
+    #   ++ (Concat)   String x String  -> String
 
   end
 end
