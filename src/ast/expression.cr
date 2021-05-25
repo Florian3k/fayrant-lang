@@ -109,7 +109,7 @@ module FayrantLang
           super
         end
   
-        def eval(env) : AnyValue
+        def eval(env) : NumberValue
           NumberValue.new @expr.eval(env).ToNumber
         end
   
@@ -190,15 +190,109 @@ module FayrantLang
       end
     end
 
+    # TODO: Decide if we want bitwise operations
     #   &  (And)      Number x Number  -> Number
     #   |  (Or)      Boolean x Boolean -> Boolean
-    #   >  (Gt)       Number x Number  -> Boolean
-    #   <  (Lt)       Number x Number  -> Boolean
-    #   <= (Le)       Number x Number  -> Boolean
-    #   >= (Ge)       Number x Number  -> Boolean
-    #   == (Eq)          Any x Any     -> Boolean (compare values using ==)
-    #   != (Neq)         Any x Any     -> Boolean (as above)
-    #   ++ (Concat)   String x String  -> String
+
+    class BinaryExprGt < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        BooleanValue.new @lhs.eval(env).getNumber > @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprLt < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        BooleanValue.new @lhs.eval(env).getNumber < @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprGe < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        BooleanValue.new @lhs.eval(env).getNumber >= @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprLe < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        BooleanValue.new @lhs.eval(env).getNumber <= @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprEq < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        BooleanValue.new @lhs.eval(env).getNumber == @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprNeq < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        BooleanValue.new @lhs.eval(env).getNumber != @rhs.eval(env).getNumber
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprConcat < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : StringValue
+        StringValue.new @lhs.eval(env).toString + @rhs.eval(env).toString
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    # VALIDATE THE CODE AND WRITE TESTS!
 
   end
 end
