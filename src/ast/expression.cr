@@ -75,6 +75,51 @@ module FayrantLang
         end
       end
 
+      class UnaryExprNegation < UnaryExpr
+        def initialize(expr : Expr)
+          super
+        end
+  
+        def eval(env) : Boolean
+          BooleanValue.new !@expr.eval(env).getBoolean
+        end
+  
+        def ==(other : UnaryExprNegation)
+          expr == other.expr
+        end
+      end
+
+      class UnaryExprToString < UnaryExpr
+        def initialize(expr : Expr)
+          super
+        end
+  
+        def eval(env) : AnyValue
+          StringValue.new @expr.eval(env).toString
+        end
+  
+        def ==(other : UnaryExprToString)
+          expr == other.expr
+        end
+      end
+
+      class UnaryExprToNumber < UnaryExpr
+        def initialize(expr : Expr)
+          super
+        end
+  
+        def eval(env) : AnyValue
+          NumberValue.new @expr.eval(env).ToNumber
+        end
+  
+        def ==(other : UnaryExprToString)
+          expr == other.expr
+        end
+      end
+
+      # TODO: (UnaryExprToNumber)     Any -> Number (Any means bool, number or string in this context)
+
       
+
   end
 end
