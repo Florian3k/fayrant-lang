@@ -103,7 +103,6 @@ module FayrantLang
         end
       end
 
-      # ?????
       class UnaryExprToNumber < UnaryExpr
         def initialize(expr : Expr)
           super
@@ -126,13 +125,11 @@ module FayrantLang
             raise Exception
           end
         end
-                    
+
         def ==(other : UnaryExprToString)
           expr == other.expr
         end
       end
-
-      # TODO: (UnaryExprToNumber)     Any -> Number (Any means bool, number or string in this context)
 
       abstract class BinaryExpr < Expr
         getter lhs
