@@ -234,7 +234,7 @@ module FayrantLang
           lhs == other.lhs && rhs == other.rhs
         end
       end
-      
+
     class BinaryExprExpt < BinaryExpr
       def initialize(lhs : Expr, rhs : Expr)
         super
@@ -249,9 +249,33 @@ module FayrantLang
       end
     end
 
-    # TODO: Decide if we want bitwise operations
-    #   &  (And)      Number x Number  -> Number
-    #   |  (Or)      Boolean x Boolean -> Boolean
+    class BinaryExprAnd < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        NumberValue.new @lhs.eval(env).getBoolean && @rhs.eval(env).getBoolean
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
+
+    class BinaryExprOr < BinaryExpr
+      def initialize(lhs : Expr, rhs : Expr)
+        super
+      end
+
+      def eval(env) : BooleanValue
+        NumberValue.new @lhs.eval(env).getBoolean || @rhs.eval(env).getBoolean
+      end
+
+      def ==(other : BinaryExprPlus)
+        lhs == other.lhs && rhs == other.rhs
+      end
+    end
 
     class BinaryExprGt < BinaryExpr
       def initialize(lhs : Expr, rhs : Expr)
