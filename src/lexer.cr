@@ -22,6 +22,10 @@ module FayrantLang
       }, {
         /^(return)\b/, TokenType::RETURN,
       }, {
+        /^(break)\b/, TokenType::BREAK,
+      }, {
+        /^(continue)\b/, TokenType::CONTINUE,
+      }, {
         /^(true)\b/, TokenType::TRUE,
       }, {
         /^(false)\b/, TokenType::FALSE,
