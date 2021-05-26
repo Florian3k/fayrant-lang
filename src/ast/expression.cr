@@ -375,7 +375,7 @@ module FayrantLang
       end
     end
 
-    # VALIDATE THE CODE AND WRITE TESTS!
+    # TODO: VALIDATE THE CODE AND WRITE TESTS!
 
   end
 end
