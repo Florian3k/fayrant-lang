@@ -108,11 +108,25 @@ module FayrantLang
         def initialize(expr : Expr)
           super
         end
-  
+
         def eval(env) : NumberValue
-          NumberValue.new @expr.eval(env).ToNumber
+          case @expr.eval(env).type
+          when ValueType::Number
+            NumberValue.new @expr.eval(env).getNumber
+          when ValueType::Boolean
+            NumberValue.new @expr.eval(env).getBoolean ? 1 : 0
+          when ValueType::String
+            val = @expr.eval(env).getString.to_f64?
+            unless val == Nil
+              @expr.eval(env).getString.to_f64
+            else
+              raise Exception
+            end
+          else
+            raise Exception
+          end
         end
-  
+                    
         def ==(other : UnaryExprToString)
           expr == other.expr
         end
