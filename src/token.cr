@@ -9,6 +9,8 @@ module FayrantLang
     FOR
     VAR
     RETURN
+    BREAK
+    CONTINUE
 
     IDENTIFIER
 
