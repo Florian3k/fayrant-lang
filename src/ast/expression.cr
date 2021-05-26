@@ -167,7 +167,7 @@ module FayrantLang
         end
       end
 
-      class BinaryExprTimes < BinaryExpr
+      class BinaryExprMult < BinaryExpr
         def initialize(lhs : Expr, rhs : Expr)
           super
         end
@@ -181,12 +181,60 @@ module FayrantLang
         end
       end
 
-      # TODO: Make sure we have a consistent view on handling arithmetic expressions and implement div and mod:
+      class BinaryExprDiv < BinaryExpr
+        def initialize(lhs : Expr, rhs : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          unless @rhs.eval(env).getNumber == 0
+            NumberValue.new @lhs.eval(env).getNumber / @rhs.eval(env).getNumber
+          else
+            raise Exception
+          end
+        end
+  
+        def ==(other : BinaryExprPlus)
+          lhs == other.lhs && rhs == other.rhs
+        end
+      end
 
-    #   /  (Div)      Number x Number  -> Number
-    #   \  (DivInv)   Number x Number  -> Number
-    #   %  (Mod)      Number x Number  -> Number
+      class BinaryExprDivInv < BinaryExpr
+        def initialize(lhs : Expr, rhs : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          unless @lhs.eval(env).getNumber == 0
+            NumberValue.new @rhs.eval(env).getNumber / @lhs.eval(env).getNumber
+          else
+            raise Exception
+          end
+        end
+  
+        def ==(other : BinaryExprPlus)
+          lhs == other.lhs && rhs == other.rhs
+        end
+      end
 
+      class BinaryExprMod < BinaryExpr
+        def initialize(lhs : Expr, rhs : Expr)
+          super
+        end
+  
+        def eval(env) : NumberValue
+          unless @rhs.eval(env).getNumber == 0
+            NumberValue.new @lhs.eval(env).getNumber % @rhs.eval(env).getNumber 
+          else
+            raise Exception
+          end
+        end
+  
+        def ==(other : BinaryExprPlus)
+          lhs == other.lhs && rhs == other.rhs
+        end
+      end
+      
     class BinaryExprExpt < BinaryExpr
       def initialize(lhs : Expr, rhs : Expr)
         super
