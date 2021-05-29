@@ -2,9 +2,9 @@
 ### Simple, interpreted, dynamically-typed programming language
 
 Authors:
-- Mikołaj Fornal
-- Paweł Karaś
-- Maciej Witkowski
+- Mikołaj Fornal [@Florian3k](https://github.com/Florian3k)
+- Paweł Karaś [@Ph0enixKM](https://github.com/Ph0enixKM)
+- Maciej Witkowski [@MaciejWitkowskiDev](https://github.com/MaciejWitkowskiDev)
 
 ## Basic syntax
 
