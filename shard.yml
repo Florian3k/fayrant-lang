@@ -2,11 +2,13 @@ name: fayrant-lang
 version: 0.1.0
 
 authors:
-  - your-name-here <your-email-here>
+  - Florian3k
+  - MaciejWitkowskiDev
+  - Ph0enixKM
 
 targets:
-  fayrant-lang:
-    main: src/fayrant-lang.cr
+  fayrant:
+    main: src/fayrant.cr
 
 crystal: 1.0.0
 
