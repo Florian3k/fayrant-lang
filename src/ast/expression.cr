@@ -116,7 +116,7 @@ module FayrantLang
         when ValueType::String
           val = @expr.eval(env).getString.to_f64?
           unless val == Nil
-            @expr.eval(env).getString.to_f64
+            NumberValue.new val
           else
             raise Exception
           end
