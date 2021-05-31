@@ -79,7 +79,7 @@ module FayrantLang
         super
       end
 
-      def eval(env) : Boolean
+      def eval(env) : BooleanValue
         BooleanValue.new !@expr.eval(env).getBoolean
       end
 
