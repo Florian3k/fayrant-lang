@@ -338,7 +338,7 @@ module FayrantLang
       end
 
       def eval(env) : BooleanValue
-        BooleanValue.new @lhs.eval(env).getNumber == @rhs.eval(env).getNumber
+        BooleanValue.new @lhs.eval(env) == @rhs.eval(env)
       end
 
       def ==(other : BinaryExprPlus)
@@ -352,7 +352,7 @@ module FayrantLang
       end
 
       def eval(env) : BooleanValue
-        BooleanValue.new @lhs.eval(env).getNumber != @rhs.eval(env).getNumber
+        BooleanValue.new @lhs.eval(env) != @rhs.eval(env)
       end
 
       def ==(other : BinaryExprPlus)
