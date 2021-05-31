@@ -243,6 +243,7 @@ module FayrantLang
       end
 
       def eval(env) : NumberValue
+        # TODO check for exceptions
         NumberValue.new @lhs.eval(env).getNumber ** @rhs.eval(env).getNumber
       end
 
