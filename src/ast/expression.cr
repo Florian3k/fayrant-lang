@@ -205,8 +205,9 @@ module FayrantLang
       end
 
       def eval(env) : NumberValue
-        unless @lhs.eval(env).getNumber == 0
-          NumberValue.new @rhs.eval(env).getNumber / @lhs.eval(env).getNumber
+        lval = @lhs.eval(env).getNumber
+        unless lval == 0
+          NumberValue.new @rhs.eval(env).getNumber / lval
         else
           raise Exception
         end
