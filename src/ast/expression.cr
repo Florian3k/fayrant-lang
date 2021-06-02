@@ -127,7 +127,7 @@ module FayrantLang
         end
       end
 
-      def ==(other : UnaryExprToString)
+      def ==(other : UnaryExprToNumber)
         expr == other.expr
       end
     end
