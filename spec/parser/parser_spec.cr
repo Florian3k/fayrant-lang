@@ -1,10 +1,10 @@
 require "spec"
 require "../../src/parser/parser.cr"
-require "../../src/lexer.cr"
+require "../../src/parser/lexer.cr"
 
 include FayrantLang
 
-describe "FayrantLang Parser", focus: true do
+describe "FayrantLang Parser" do
   it "should parse '2 + 3 / 4;'" do
     tokens = Lexer.new("2 + 3 / 4;").scan_tokens
     result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr

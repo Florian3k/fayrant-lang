@@ -1,4 +1,3 @@
-require "../token.cr"
 require "../ast/expression.cr"
 require "../ast/statement.cr"
 

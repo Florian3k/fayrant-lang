@@ -1,5 +1,5 @@
 require "spec"
-require "../src/lexer.cr"
+require "../../src/parser/lexer.cr"
 
 include FayrantLang
 
