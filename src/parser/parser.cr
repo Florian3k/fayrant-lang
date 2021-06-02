@@ -32,20 +32,30 @@ module FayrantLang
     end
 
     private def parse_expr_plus_minus
-      expr = parse_expr_times_div_mod
+      expr = parse_expr_div_inv
       while true
         case currentToken.type
         when TokenType::OP_PLUS
           consumeToken TokenType::OP_PLUS
-          expr = BinaryExprPlus.new expr, parse_expr_times_div_mod
+          expr = BinaryExprPlus.new expr, parse_expr_div_inv
         when TokenType::OP_MINUS
           consumeToken TokenType::OP_MINUS
-          expr = BinaryExprMinus.new expr, parse_expr_times_div_mod
+          expr = BinaryExprMinus.new expr, parse_expr_div_inv
         else
           break
         end
       end
       expr
+    end
+
+    private def parse_expr_div_inv
+      expr = parse_expr_times_div_mod
+      if currentToken.type == TokenType::OP_DIV_INV
+        consumeToken TokenType::OP_DIV_INV
+        BinaryExprDivInv.new expr, parse_expr_div_inv
+      else
+        expr
+      end
     end
 
     private def parse_expr_times_div_mod

@@ -48,4 +48,20 @@ describe "FayrantLang Parser", focus: true do
       )
     result.should eq expected
   end
+
+  it "should parse '1 \\ 2 / 3 \\ 4;'" do
+    tokens = Lexer.new("1 \\ 2 / 3 \\ 4;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprDivInv.new(
+      NumberLiteralExpr.new(1),
+      BinaryExprDivInv.new(
+        BinaryExprDiv.new(
+          NumberLiteralExpr.new(2),
+          NumberLiteralExpr.new(3)
+        ),
+        NumberLiteralExpr.new(4)
+      )
+    )
+    result.should eq expected
+  end
 end
