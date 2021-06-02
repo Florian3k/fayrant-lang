@@ -19,7 +19,9 @@ Authors:
       - [ ] add tests
     - [x] Binary expr done
       - [ ] add tests
-    - [ ] TODO add other exprs to this list
+    - [ ] Variable expr
+    - [ ] Object access expr
+    - [ ] Function call expr
 - [ ] Parser - 0% done
   - [ ] Statement parser
   - [ ] Expr parser
