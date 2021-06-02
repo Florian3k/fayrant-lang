@@ -12,7 +12,7 @@ Authors:
   - [ ] add more tests
 - [ ] AST
   - [ ] Statement - 0% done
-    - TODO add statements to this list
+    - [ ] TODO add statements to this list
   - [ ] Expr
     - [x] Basic literals done
     - [x] Unary expr done
