@@ -6,6 +6,30 @@ Authors:
 - Paweł Karaś [@Ph0enixKM](https://github.com/Ph0enixKM)
 - Maciej Witkowski [@MaciejWitkowskiDev](https://github.com/MaciejWitkowskiDev)
 
+## Work progress / TODO
+- [x] Lexer - mostly (like 98%) done
+  - [ ] unicode escapes
+  - [ ] add more tests
+- [ ] AST
+  - [ ] Statement - 0% done
+    - TODO add statements to this list
+  - [ ] Expr
+    - [x] Basic literals done
+    - [x] Unary expr done
+      - [ ] add tests
+    - [x] Binary expr done
+      - [ ] add tests
+    - [ ] TODO add other exprs to this list
+- [ ] Parser - 0% done
+  - [ ] Statement parser
+  - [ ] Expr parser
+- [ ] Other
+  - [ ] builtin classes/functions - 0% done
+    - [ ] Array
+    - [ ] Dict
+    - [ ] File (?)
+    - [ ] Math object (?)
+
 ## Basic syntax
 
 ```=
