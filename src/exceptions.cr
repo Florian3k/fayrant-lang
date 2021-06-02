@@ -5,7 +5,12 @@ module FayrantLang
     def initialize(@expected : ValueType, @actual : ValueType)
       super "ValueError: expected type #{@expected}, instead got #{@actual}"
     end
+    def initialize(@expected : String, @actual : String)
+      super "ValueError: expected type #{@expected}, instead got #{@actual}"
+    end
+    
   end
+  
 
   class ArityMismatchError < Exception
     def initialize(@expected : Int32, @actual : Int32)
