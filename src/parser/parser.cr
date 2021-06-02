@@ -49,23 +49,42 @@ module FayrantLang
     end
 
     private def parse_expr_times_div_mod
-      expr = parse_expr_basic
+      expr = parse_expr_unary
       while true
         case currentToken.type
         when TokenType::OP_TIMES
           consumeToken TokenType::OP_TIMES
-          expr = BinaryExprMult.new expr, parse_expr_basic
+          expr = BinaryExprMult.new expr, parse_expr_unary
         when TokenType::OP_DIV
           consumeToken TokenType::OP_DIV
-          expr = BinaryExprDiv.new expr, parse_expr_basic
+          expr = BinaryExprDiv.new expr, parse_expr_unary
         when TokenType::OP_MOD
           consumeToken TokenType::OP_MOD
-          expr = BinaryExprMod.new expr, parse_expr_basic
+          expr = BinaryExprMod.new expr, parse_expr_unary
         else
           break
         end
       end
       expr
+    end
+
+    private def parse_expr_unary
+      case currentToken.type
+      when TokenType::OP_MINUS
+        consumeToken TokenType::OP_MINUS
+        UnaryExprMinus.new parse_expr_unary
+      when TokenType::OP_NEG
+        consumeToken TokenType::OP_NEG
+        UnaryExprNegation.new parse_expr_unary
+      when TokenType::OP_TO_STR
+        consumeToken TokenType::OP_TO_STR
+        UnaryExprToString.new parse_expr_unary
+      when TokenType::OP_TO_NUM
+        consumeToken TokenType::OP_TO_NUM
+        UnaryExprToNumber.new parse_expr_unary
+      else
+        parse_expr_basic
+      end
     end
 
     private def parse_expr_basic

@@ -29,4 +29,23 @@ describe "FayrantLang Parser", focus: true do
     )
     result.should eq expected
   end
+
+  it "should parse '2 + @#!-7;'" do
+    tokens = Lexer.new("2 + @#!-7;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected =
+      BinaryExprPlus.new(
+        NumberLiteralExpr.new(2),
+        UnaryExprToString.new(
+          UnaryExprToNumber.new(
+            UnaryExprNegation.new(
+              UnaryExprMinus.new(
+                NumberLiteralExpr.new(7),
+              )
+            )
+          )
+        )
+      )
+    result.should eq expected
+  end
 end
