@@ -112,20 +112,22 @@ module FayrantLang
         when ValueType::Number
           NumberValue.new @expr.eval(env).getNumber
         when ValueType::Boolean
-          NumberValue.new @expr.eval(env).getBoolean ? 1 : 0
+          NumberValue.new @expr.eval(env).getBoolean ? 1.0 : 0.0
         when ValueType::String
           val = @expr.eval(env).getString.to_f64?
-          unless val == Nil
+          if val.is_a?(Float64)
             NumberValue.new val
           else
-            raise Exception
+            # TODO
+            raise Exception.new "TODO"
           end
         else
-          raise Exception
+          # TODO
+          raise Exception.new "TODO"
         end
       end
 
-      def ==(other : UnaryExprToString)
+      def ==(other : UnaryExprToNumber)
         expr == other.expr
       end
     end
@@ -161,7 +163,7 @@ module FayrantLang
         NumberValue.new @lhs.eval(env).getNumber - @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprMinus)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -175,7 +177,7 @@ module FayrantLang
         NumberValue.new @lhs.eval(env).getNumber * @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprMult)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -190,11 +192,12 @@ module FayrantLang
         unless rval == 0
           NumberValue.new @lhs.eval(env).getNumber / rval
         else
-          raise Exception
+          # TODO
+          raise Exception.new "TODO"
         end
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprDiv)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -209,11 +212,12 @@ module FayrantLang
         unless lval == 0
           NumberValue.new @rhs.eval(env).getNumber / lval
         else
-          raise Exception
+          # TODO
+          raise Exception.new "TODO"
         end
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprDivInv)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -228,11 +232,11 @@ module FayrantLang
         unless rval == 0
           NumberValue.new @lhs.eval(env).getNumber % rval
         else
-          raise Exception
+          raise Exception.new "TODO"
         end
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprMod)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -247,7 +251,7 @@ module FayrantLang
         NumberValue.new @lhs.eval(env).getNumber ** @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprExpt)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -258,10 +262,10 @@ module FayrantLang
       end
 
       def eval(env) : BooleanValue
-        NumberValue.new @lhs.eval(env).getBoolean && @rhs.eval(env).getBoolean
+        BooleanValue.new @lhs.eval(env).getBoolean && @rhs.eval(env).getBoolean
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprAnd)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -272,10 +276,10 @@ module FayrantLang
       end
 
       def eval(env) : BooleanValue
-        NumberValue.new @lhs.eval(env).getBoolean || @rhs.eval(env).getBoolean
+        BooleanValue.new @lhs.eval(env).getBoolean || @rhs.eval(env).getBoolean
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprOr)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -289,7 +293,7 @@ module FayrantLang
         BooleanValue.new @lhs.eval(env).getNumber > @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprGt)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -303,7 +307,7 @@ module FayrantLang
         BooleanValue.new @lhs.eval(env).getNumber < @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprLt)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -317,7 +321,7 @@ module FayrantLang
         BooleanValue.new @lhs.eval(env).getNumber >= @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprGe)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -331,7 +335,7 @@ module FayrantLang
         BooleanValue.new @lhs.eval(env).getNumber <= @rhs.eval(env).getNumber
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprLe)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -345,7 +349,7 @@ module FayrantLang
         BooleanValue.new @lhs.eval(env) == @rhs.eval(env)
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprEq)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -359,7 +363,7 @@ module FayrantLang
         BooleanValue.new @lhs.eval(env) != @rhs.eval(env)
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprNeq)
         lhs == other.lhs && rhs == other.rhs
       end
     end
@@ -373,7 +377,7 @@ module FayrantLang
         StringValue.new @lhs.eval(env).toString + @rhs.eval(env).toString
       end
 
-      def ==(other : BinaryExprPlus)
+      def ==(other : BinaryExprConcat)
         lhs == other.lhs && rhs == other.rhs
       end
     end

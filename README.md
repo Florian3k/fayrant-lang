@@ -22,9 +22,17 @@ Authors:
     - [ ] Variable expr
     - [ ] Object access expr
     - [ ] Function call expr
-- [ ] Parser - 0% done
+- [ ] Parser - 1% done
   - [ ] Statement parser
   - [ ] Expr parser
+    - [x] Literal
+      - [ ] String literals
+    - [ ] Variables
+    - [x] Grouping
+    - [x] Unary
+    - [ ] Binary - partially done
+    - [ ] Object access
+    - [ ] Function call
 - [ ] Other
   - [ ] builtin classes/functions - 0% done
     - [ ] Array
