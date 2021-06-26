@@ -232,11 +232,11 @@ module FayrantLang
             '}'  => '}',
           }
           if char2 == 'u'
+            buffer = ""
             @index += 1
             if @text[@index] != '{'
               raise Exception.new "Expected { after \\u at index #{@index}!"
             end
-            buffer = ""
             loop do
               @index += 1
               char3 = @text[@index]
