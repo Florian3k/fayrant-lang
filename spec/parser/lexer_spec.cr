@@ -106,20 +106,18 @@ describe "FayrantLang Lexer" do
     end
   end
 
-  it "should tokenize '\"test\\u{65}\\u{0x41}\";'" do
-    input = "\"test\\u{65}\\u{0x41}\";"
-    #         01234 56789            0
-    #                    0 12345678 9
-    # result = Lexer.new(input).scan_tokens
+  it "should tokenize '\"This is scary, \\u{65}\\u{0x41}\\u{0b01000001}!\";'" do
+    input = "\"This is scary, \\u{65}\\u{0x41}\\u{0b01000001}!\";"
+    result = Lexer.new(input).scan_tokens
     expected = [
       Token.new(TokenType::QUOTE, "\"", Location.new 1, 0, 0),
-      Token.new(TokenType::STRING_FRAGMENT, "testAA", Location.new 1, 1, 18),
-      Token.new(TokenType::QUOTE, "\"", Location.new 1, 19, 19),
-      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 20, 20),
+      Token.new(TokenType::STRING_FRAGMENT, "This is scary, AAA!", Location.new 1, 1, 44),
+      Token.new(TokenType::QUOTE, "\"", Location.new 1, 45, 45),
+      Token.new(TokenType::SEMICOLON, ";", Location.new 1, 46, 46),
     ]
-    # result.zip?(expected) do |res, exp|
-    #   res.should eq exp
-    # end
+    result.zip?(expected) do |res, exp|
+      res.should eq exp
+    end
   end
 
   it "should tokenize simple tokens" do
