@@ -232,8 +232,25 @@ module FayrantLang
             '}'  => '}',
           }
           if char2 == 'u'
-            raise Exception.new "Unicode escape codes are not implemented yet!"
-            # TODO
+            buffer = ""
+            @index += 1
+            if @text[@index] != '{'
+              raise Exception.new "Expected { after \\u at index #{@index}!"
+            end
+            loop do
+              @index += 1
+              char3 = @text[@index]
+              break if char3 == '}'
+              buffer += char3
+            end
+            case buffer[0..1]
+              when "0x"
+                str_frag += buffer[2..].to_i(16).chr
+              when "0b"
+                str_frag += buffer[2..].to_i(2).chr
+              else
+                str_frag += buffer.to_i.chr
+            end
           elsif map.has_key? char2
             str_frag += map[char2]
           else
