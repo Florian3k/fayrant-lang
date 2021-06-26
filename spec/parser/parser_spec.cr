@@ -30,6 +30,16 @@ describe "FayrantLang Parser" do
     result.should eq expected
   end
 
+  it "should parse '0xC0DE + 0b1010;'" do
+    tokens = Lexer.new("0xC0DE + 0b1010;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprPlus.new(
+      NumberLiteralExpr.new(49374),
+      NumberLiteralExpr.new(10)
+    )
+    result.should eq expected
+  end
+
   it "should parse '2 + @#!-7;'" do
     tokens = Lexer.new("2 + @#!-7;").scan_tokens
     result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr

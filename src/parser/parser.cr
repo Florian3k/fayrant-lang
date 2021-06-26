@@ -224,8 +224,14 @@ module FayrantLang
         VariableExpr.new token.lexeme
       when TokenType::NUMBER
         token = consumeToken TokenType::NUMBER
-        # TODO handle 0x and 0b literals
-        NumberLiteralExpr.new token.lexeme.to_f
+        case token.lexeme[0..1]
+          when "0x"
+            NumberLiteralExpr.new token.lexeme[2..].to_i(16).to_f
+          when "0b"
+            NumberLiteralExpr.new token.lexeme[2..].to_i(2).to_f
+          else
+            NumberLiteralExpr.new token.lexeme.to_f
+        end
       when TokenType::TRUE
         consumeToken TokenType::TRUE
         BooleanLiteralExpr.new true
