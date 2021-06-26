@@ -181,11 +181,36 @@ module FayrantLang
         consumeToken TokenType::OP_TO_NUM
         UnaryExprToNumber.new parse_expr_unary
       else
-        parse_expr_basic # TODO
+        parse_expr_call_access
       end
     end
 
-    ## TODO object accass and function call
+    private def parse_expr_call_access
+      expr = parse_expr_basic
+      while true
+        case currentToken.type
+        when TokenType::DOT
+          consumeToken TokenType::DOT
+          identifier = consumeToken TokenType::IDENTIFIER
+          expr = ObjectAccessExpr.new expr, identifier.lexeme
+        when TokenType::L_PAREN
+          consumeToken TokenType::L_PAREN
+          args = [] of Expr
+          while currentToken.type != TokenType::R_PAREN
+            args << parse_expr
+            if currentToken.type == TokenType::R_PAREN
+              break
+            end
+            consumeToken TokenType::COMMA
+          end
+          consumeToken TokenType::R_PAREN
+          expr = FunctionCallExpr.new expr, args
+        else
+          break
+        end
+      end
+      expr
+    end
 
     private def parse_expr_basic
       case currentToken.type
@@ -229,7 +254,7 @@ module FayrantLang
         @index += 1
         return @tokens[@index - 1]
       end
-      raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
+      raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme}, expected #{tt}"
     end
   end
 end

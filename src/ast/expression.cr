@@ -383,5 +383,37 @@ module FayrantLang
     end
 
     # TODO: VALIDATE THE CODE AND WRITE TESTS!
+
+    class FunctionCallExpr < Expr
+      getter fn
+      getter args
+
+      def initialize(@fn : Expr, @args : Array(Expr))
+      end
+
+      def eval(env : Object) : AnyValue
+        fn.eval(env).getFunction.call(args)
+      end
+
+      def ==(other : FunctionCallExpr)
+        fn == other.fn && args == other.args
+      end
+    end
+
+    class ObjectAccessExpr < Expr
+      getter obj
+      getter field
+
+      def initialize(@obj : Expr, @field : String)
+      end
+
+      def eval(env : Object) : AnyValue
+        # TODO
+      end
+
+      def ==(other : ObjectAccessExpr)
+        obj == other.obj && field == other.field
+      end
+    end
   end
 end
