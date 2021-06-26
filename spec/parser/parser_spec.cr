@@ -107,4 +107,23 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse '1.a(2, 3 + 4).b();'" do
+    tokens = Lexer.new("1.a(2, 3 + 4).b();").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = FunctionCallExpr.new(
+      ObjectAccessExpr.new(
+        FunctionCallExpr.new(
+          ObjectAccessExpr.new(NumberLiteralExpr.new(1), "a"),
+          [
+            NumberLiteralExpr.new(2),
+            BinaryExprPlus.new(NumberLiteralExpr.new(3), NumberLiteralExpr.new(4)),
+          ],
+        ),
+        "b"
+      ),
+      [] of Expr,
+    )
+    result.should eq expected
+  end
 end
