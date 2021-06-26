@@ -221,8 +221,7 @@ module FayrantLang
         expr
       when TokenType::IDENTIFIER
         token = consumeToken TokenType::IDENTIFIER
-        # TODO
-        raise Exception.new "Variable expression are not implemented yet"
+        VariableExpr.new token.lexeme
       when TokenType::NUMBER
         token = consumeToken TokenType::NUMBER
         # TODO handle 0x and 0b literals

@@ -53,6 +53,22 @@ module FayrantLang
 
     # TODO : Implement string literals
 
+    class VariableExpr < Expr
+      getter name
+
+      def initialize(@name : String)
+      end
+
+      def eval(env : Object) : AnyValue
+        # TODO
+        raise Exception.new "TODO"
+      end
+
+      def ==(other : VariableExpr)
+        name == other.name
+      end
+    end
+
     abstract class UnaryExpr < Expr
       getter expr
 

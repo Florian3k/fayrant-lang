@@ -126,4 +126,14 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse 'a.b + c * d;'" do
+    tokens = Lexer.new("a.b + c * d;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprPlus.new(
+      ObjectAccessExpr.new(VariableExpr.new("a"), "b"),
+      BinaryExprMult.new(VariableExpr.new("c"), VariableExpr.new("d")),
+    )
+    result.should eq expected
+  end
 end
