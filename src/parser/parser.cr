@@ -2,6 +2,7 @@ require "../ast/expression.cr"
 require "../ast/statement.cr"
 
 module FayrantLang
+  include AST
   class Parser
     def initialize(@tokens : Array(Token))
       @index = 0
@@ -26,8 +27,86 @@ module FayrantLang
     end
 
     private def parse_expr
-      # TODO
-      parse_expr_plus_minus
+      parse_expr_or
+    end
+
+    private def parse_expr_or
+      expr = parse_expr_and
+      while true
+        if currentToken.type == TokenType::OP_OR
+          consumeToken TokenType::OP_OR
+          expr = BinaryExprOr.new expr, parse_expr_and
+        else
+          break
+        end
+      end
+      expr
+    end
+
+    private def parse_expr_and
+      expr = parse_expr_equality
+      while true
+        if currentToken.type == TokenType::OP_AND
+          consumeToken TokenType::OP_AND
+          expr = BinaryExprAnd.new expr, parse_expr_equality
+        else
+          break
+        end
+      end
+      expr
+    end
+
+    private def parse_expr_equality
+      expr = parse_expr_compare
+      while true
+        case currentToken.type
+        when TokenType::OP_EQ
+          consumeToken TokenType::OP_EQ
+          expr = BinaryExprEq.new expr, parse_expr_compare
+        when TokenType::OP_NEQ
+          consumeToken TokenType::OP_NEQ
+          expr = BinaryExprNeq.new expr, parse_expr_compare
+        else
+          break
+        end
+      end
+      expr
+    end
+
+    private def parse_expr_compare
+      expr = parse_expr_concat
+      while true
+        case currentToken.type
+        when TokenType::OP_GT
+          consumeToken TokenType::OP_GT
+          expr = BinaryExprGt.new expr, parse_expr_concat
+        when TokenType::OP_LT
+          consumeToken TokenType::OP_LT
+          expr = BinaryExprLt.new expr, parse_expr_concat
+        when TokenType::OP_GE
+          consumeToken TokenType::OP_GE
+          expr = BinaryExprGe.new expr, parse_expr_concat
+        when TokenType::OP_LE
+          consumeToken TokenType::OP_LE
+          expr = BinaryExprLe.new expr, parse_expr_concat
+        else
+          break
+        end
+      end
+      expr
+    end
+
+    private def parse_expr_concat
+      expr = parse_expr_plus_minus
+      while true
+        if currentToken.type == TokenType::OP_CONCAT
+          consumeToken TokenType::OP_CONCAT
+          expr = BinaryExprConcat.new expr, parse_expr_plus_minus
+        else
+          break
+        end
+      end
+      expr
     end
 
     private def parse_expr_plus_minus
@@ -58,23 +137,33 @@ module FayrantLang
     end
 
     private def parse_expr_times_div_mod
-      expr = parse_expr_unary
+      expr = parse_expr_expt
       while true
         case currentToken.type
         when TokenType::OP_TIMES
           consumeToken TokenType::OP_TIMES
-          expr = BinaryExprMult.new expr, parse_expr_unary
+          expr = BinaryExprMult.new expr, parse_expr_expt
         when TokenType::OP_DIV
           consumeToken TokenType::OP_DIV
-          expr = BinaryExprDiv.new expr, parse_expr_unary
+          expr = BinaryExprDiv.new expr, parse_expr_expt
         when TokenType::OP_MOD
           consumeToken TokenType::OP_MOD
-          expr = BinaryExprMod.new expr, parse_expr_unary
+          expr = BinaryExprMod.new expr, parse_expr_expt
         else
           break
         end
       end
       expr
+    end
+
+    private def parse_expr_expt
+      expr = parse_expr_unary
+      if currentToken.type == TokenType::OP_EXPT
+        consumeToken TokenType::OP_EXPT
+        BinaryExprExpt.new expr, parse_expr_expt
+      else
+        expr
+      end
     end
 
     private def parse_expr_unary
@@ -92,9 +181,11 @@ module FayrantLang
         consumeToken TokenType::OP_TO_NUM
         UnaryExprToNumber.new parse_expr_unary
       else
-        parse_expr_basic
+        parse_expr_basic # TODO
       end
     end
+
+    ## TODO object accass and function call
 
     private def parse_expr_basic
       case currentToken.type
