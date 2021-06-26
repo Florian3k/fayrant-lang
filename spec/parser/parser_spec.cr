@@ -64,4 +64,47 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse '1 & 2 | 3 | 4 & 5;'" do
+    tokens = Lexer.new("1 & 2 | 3 | 4 & 5;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprOr.new(
+      BinaryExprOr.new(
+        BinaryExprAnd.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+        NumberLiteralExpr.new(3),
+      ),
+      BinaryExprAnd.new(NumberLiteralExpr.new(4), NumberLiteralExpr.new(5)),
+    )
+    result.should eq expected
+  end
+
+  it "should parse '1 > 2 | 3 <= 4;'" do
+    tokens = Lexer.new("1 > 2 | 3 <= 4;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprOr.new(
+      BinaryExprGt.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+      BinaryExprLe.new(NumberLiteralExpr.new(3), NumberLiteralExpr.new(4)),
+    )
+    result.should eq expected
+  end
+
+  it "should parse '1 ++ 2 ++ 3;'" do
+    tokens = Lexer.new("1 ++ 2 ++ 3;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprConcat.new(
+      BinaryExprConcat.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+      NumberLiteralExpr.new(3),
+    )
+    result.should eq expected
+  end
+
+  it "should parse '2 ^ 3 ^ 4;'" do
+    tokens = Lexer.new("2 ^ 3 ^ 4;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = BinaryExprExpt.new(
+      NumberLiteralExpr.new(2),
+      BinaryExprExpt.new(NumberLiteralExpr.new(3), NumberLiteralExpr.new(4)),
+    )
+    result.should eq expected
+  end
 end
