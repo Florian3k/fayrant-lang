@@ -279,12 +279,32 @@ module FayrantLang
         consumeToken TokenType::NULL
         NullLiteralExpr.new
       when TokenType::QUOTE
-        # TODO
-        raise Exception.new "String literals are not implemented yet"
+        parse_string
       else
         # TODO
         raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
       end
+    end
+
+    private def parse_string
+      consumeToken TokenType::QUOTE
+      fragments = [] of StringFragment
+      while currentToken.type != TokenType::QUOTE
+        case currentToken.type
+        when TokenType::STRING_FRAGMENT
+          token = consumeToken TokenType::STRING_FRAGMENT
+          fragments << StringLiteralFragment.new token.lexeme
+        when TokenType::L_BRACE
+          consumeToken TokenType::L_BRACE
+          fragments << StringInterpolationFragment.new parse_expr
+          consumeToken TokenType::R_BRACE
+        else
+          # TODO
+          raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
+        end
+      end
+      consumeToken TokenType::QUOTE
+      StringLiteralExpr.new fragments
     end
 
     private def eof

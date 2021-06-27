@@ -172,4 +172,38 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse '\"abc{ 1 + 2 }def\";'" do
+    tokens = Lexer.new("\"abc{ 1 + 2 }def\";").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = StringLiteralExpr.new([
+      StringLiteralFragment.new("abc"),
+      StringInterpolationFragment.new(
+        BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2))
+      ),
+      StringLiteralFragment.new("def"),
+    ])
+    result.should eq expected
+  end
+
+  it "should parse '\"abc{ \"def{ 1 + 2 }\" ++ \"ghi\" }jkl\";'" do
+    tokens = Lexer.new("\"abc{ \"def{ 1 + 2 }\" ++ \"ghi\" }jkl\";").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr
+    expected = StringLiteralExpr.new([
+      StringLiteralFragment.new("abc"),
+      StringInterpolationFragment.new(
+        BinaryExprConcat.new(
+          StringLiteralExpr.new([
+            StringLiteralFragment.new("def"),
+            StringInterpolationFragment.new(
+              BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2))
+            ),
+          ]),
+          StringLiteralExpr.new([StringLiteralFragment.new("ghi")] of StringFragment)
+        ),
+      ),
+      StringLiteralFragment.new("jkl"),
+    ])
+    result.should eq expected
+  end
 end
