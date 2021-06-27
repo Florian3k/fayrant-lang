@@ -3,6 +3,7 @@ require "../ast/statement.cr"
 
 module FayrantLang
   include AST
+
   class Parser
     def initialize(@tokens : Array(Token))
       @index = 0
@@ -10,8 +11,9 @@ module FayrantLang
 
     def parse_program
       statements = [] of Statement
-      #TODO
-      statements << parse_statement
+      until eof
+        statements << parse_statement
+      end
       statements
     end
 
@@ -225,12 +227,12 @@ module FayrantLang
       when TokenType::NUMBER
         token = consumeToken TokenType::NUMBER
         case token.lexeme[0..1]
-          when "0x"
-            NumberLiteralExpr.new token.lexeme[2..].to_i(16).to_f
-          when "0b"
-            NumberLiteralExpr.new token.lexeme[2..].to_i(2).to_f
-          else
-            NumberLiteralExpr.new token.lexeme.to_f
+        when "0x"
+          NumberLiteralExpr.new token.lexeme[2..].to_i(16).to_f
+        when "0b"
+          NumberLiteralExpr.new token.lexeme[2..].to_i(2).to_f
+        else
+          NumberLiteralExpr.new token.lexeme.to_f
         end
       when TokenType::TRUE
         consumeToken TokenType::TRUE
@@ -250,16 +252,23 @@ module FayrantLang
       end
     end
 
+    private def eof
+      return @index >= @tokens.size
+    end
+
     private def currentToken
       return @tokens[@index]
     end
 
     private def consumeToken(tt : TokenType)
-      if @tokens[@index].type == tt
+      if eof
+        raise Exception.new "Unexpected end of input, expected #{tt}"
+      elsif @tokens[@index].type == tt
         @index += 1
         return @tokens[@index - 1]
+      else
+        raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme}, expected #{tt}"
       end
-      raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme}, expected #{tt}"
     end
   end
 end

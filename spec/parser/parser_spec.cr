@@ -146,4 +146,20 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse 'a + b; 1 + 2;'" do
+    tokens = Lexer.new("a + b; 1 + 2;").scan_tokens
+    result = Parser.new(tokens).parse_program
+    expected = [
+      ExprStatement.new(
+        BinaryExprPlus.new(VariableExpr.new("a"), VariableExpr.new("b"))
+      ),
+      ExprStatement.new(
+        BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2))
+      ),
+    ]
+    result.zip?(expected) do |res, exp|
+      res.should eq exp
+    end
+  end
 end
