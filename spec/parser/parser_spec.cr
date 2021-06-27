@@ -162,4 +162,14 @@ describe "FayrantLang Parser" do
       res.should eq exp
     end
   end
+
+  it "should parse 'var x = 1 + 2;'" do
+    tokens = Lexer.new("var x = 1 + 2;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(VariableDeclarationStatement)
+    expected = VariableDeclarationStatement.new(
+      "x",
+      BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+    )
+    result.should eq expected
+  end
 end

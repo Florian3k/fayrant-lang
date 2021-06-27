@@ -17,9 +17,44 @@ module FayrantLang
       statements
     end
 
-    private def parse_statement
-      # TODO
-      parse_expr_statement
+    private def parse_statement : Statement
+      case currentToken.type
+      when TokenType::FUNC
+        raise Exception.new "TODO"
+      when TokenType::CLASS
+        raise Exception.new "TODO"
+      when TokenType::IF
+        raise Exception.new "TODO"
+      when TokenType::WHILE
+        raise Exception.new "TODO"
+      when TokenType::FOR
+        raise Exception.new "TODO"
+      when TokenType::VAR
+        parse_var_statement
+      when TokenType::RETURN
+        raise Exception.new "TODO"
+      when TokenType::BREAK
+        raise Exception.new "TODO"
+      when TokenType::CONTINUE
+        raise Exception.new "TODO"
+      else
+        # TODO - assignment statement
+        parse_expr_statement
+      end
+    end
+
+    private def parse_var_statement
+      consumeToken TokenType::VAR
+      token = consumeToken TokenType::IDENTIFIER
+      expr =
+        if currentToken == TokenType::SEMICOLON
+          NullLiteralExpr.new
+        else
+          consumeToken TokenType::EQUAL
+          parse_expr
+        end
+      consumeToken TokenType::SEMICOLON
+      VariableDeclarationStatement.new token.lexeme, expr
     end
 
     private def parse_expr_statement
