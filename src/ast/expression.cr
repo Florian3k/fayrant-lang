@@ -123,14 +123,15 @@ module FayrantLang
         super
       end
 
-      def eval(env) : NumberValue
-        case @expr.eval(env).type
+      def eval(ctx : Context) : NumberValue
+        val = @expr.eval(ctx)
+        case val.type
         when ValueType::Number
-          NumberValue.new @expr.eval(env).getNumber
+          NumberValue.new val.getNumber
         when ValueType::Boolean
-          NumberValue.new @expr.eval(env).getBoolean ? 1.0 : 0.0
+          NumberValue.new val.getBoolean ? 1.0 : 0.0
         when ValueType::String
-          val = @expr.eval(env).getString.to_f64?
+          val = val.getString.to_f64?
           if val.is_a?(Float64)
             NumberValue.new val
           else
