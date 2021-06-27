@@ -206,4 +206,42 @@ describe "FayrantLang Parser" do
     ])
     result.should eq expected
   end
+
+  it "should parse 'if (true) { print(5); 7; }'" do
+    tokens = Lexer.new("if (true) { print(5); 7; }").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(IfStatement)
+    expected = IfStatement.new(
+      BooleanLiteralExpr.new(true),
+      [
+        ExprStatement.new(
+          FunctionCallExpr.new(
+            VariableExpr.new("print"),
+            [NumberLiteralExpr.new(5)] of Expr,
+          )
+        ),
+        ExprStatement.new(NumberLiteralExpr.new(7)),
+      ] of Statement,
+      [] of Statement,
+    )
+    result.should eq expected
+  end
+
+  it "should parse 'if (true) { } else { print(5); 7; }'" do
+    tokens = Lexer.new("if (true) { } else { print(5); 7; }").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(IfStatement)
+    expected = IfStatement.new(
+      BooleanLiteralExpr.new(true),
+      [] of Statement,
+      [
+        ExprStatement.new(
+          FunctionCallExpr.new(
+            VariableExpr.new("print"),
+            [NumberLiteralExpr.new(5)] of Expr,
+          )
+        ),
+        ExprStatement.new(NumberLiteralExpr.new(7)),
+      ] of Statement,
+    )
+    result.should eq expected
+  end
 end

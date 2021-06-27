@@ -24,7 +24,7 @@ module FayrantLang
       when TokenType::CLASS
         raise Exception.new "TODO"
       when TokenType::IF
-        raise Exception.new "TODO"
+        parse_if_statement
       when TokenType::WHILE
         raise Exception.new "TODO"
       when TokenType::FOR
@@ -43,6 +43,20 @@ module FayrantLang
       end
     end
 
+    private def parse_if_statement
+      consumeToken TokenType::IF
+      consumeToken TokenType::L_PAREN
+      cond = parse_expr
+      consumeToken TokenType::R_PAREN
+      true_body = parse_body
+      false_body = [] of Statement
+      if !eof && currentToken.type == TokenType::ELSE
+        consumeToken TokenType::ELSE
+        false_body = parse_body
+      end
+      IfStatement.new cond, true_body, false_body
+    end
+
     private def parse_var_statement
       consumeToken TokenType::VAR
       token = consumeToken TokenType::IDENTIFIER
@@ -55,6 +69,16 @@ module FayrantLang
         end
       consumeToken TokenType::SEMICOLON
       VariableDeclarationStatement.new token.lexeme, expr
+    end
+
+    private def parse_body
+      consumeToken TokenType::L_BRACE
+      statements = [] of Statement
+      while currentToken.type != TokenType::R_BRACE
+        statements << parse_statement
+      end
+      consumeToken TokenType::R_BRACE
+      statements
     end
 
     private def parse_expr_statement
