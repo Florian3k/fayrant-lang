@@ -51,7 +51,58 @@ module FayrantLang
       end
     end
 
-    # TODO : Implement string literals
+    class StringLiteralExpr < Expr
+      getter fragments
+
+      def initialize(@fragments : Array(StringFragment))
+      end
+
+      def eval(ctx : Context) : AnyValue
+        StringValue.new fragments.join("") { |frag| frag.eval(ctx) }
+      end
+
+      def ==(other : StringLiteralExpr)
+        fragments == other.fragments
+      end
+    end
+
+    abstract class StringFragment
+      abstract def eval(ctx : Context) : String
+
+      def ==(other)
+        false
+      end
+    end
+
+    class StringLiteralFragment < StringFragment
+      getter str
+
+      def initialize(@str : String)
+      end
+
+      def eval(ctx : Context) : String
+        str
+      end
+
+      def ==(other : StringLiteralFragment)
+        str == other.str
+      end
+    end
+
+    class StringInterpolationFragment < StringFragment
+      getter expr
+
+      def initialize(@expr : Expr)
+      end
+
+      def eval(ctx : Context) : String
+        UnaryExprToString.new(expr).eval(ctx).getString
+      end
+
+      def ==(other : StringInterpolationFragment)
+        expr == other.expr
+      end
+    end
 
     class VariableExpr < Expr
       getter name
