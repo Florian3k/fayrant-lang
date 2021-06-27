@@ -3,6 +3,7 @@ require "../ast/statement.cr"
 
 module FayrantLang
   include AST
+
   class Parser
     def initialize(@tokens : Array(Token))
       @index = 0
@@ -10,14 +11,50 @@ module FayrantLang
 
     def parse_program
       statements = [] of Statement
-      #TODO
-      statements << parse_statement
+      until eof
+        statements << parse_statement
+      end
       statements
     end
 
-    private def parse_statement
-      # TODO
-      parse_expr_statement
+    private def parse_statement : Statement
+      case currentToken.type
+      when TokenType::FUNC
+        raise Exception.new "TODO"
+      when TokenType::CLASS
+        raise Exception.new "TODO"
+      when TokenType::IF
+        raise Exception.new "TODO"
+      when TokenType::WHILE
+        raise Exception.new "TODO"
+      when TokenType::FOR
+        raise Exception.new "TODO"
+      when TokenType::VAR
+        parse_var_statement
+      when TokenType::RETURN
+        raise Exception.new "TODO"
+      when TokenType::BREAK
+        raise Exception.new "TODO"
+      when TokenType::CONTINUE
+        raise Exception.new "TODO"
+      else
+        # TODO - assignment statement
+        parse_expr_statement
+      end
+    end
+
+    private def parse_var_statement
+      consumeToken TokenType::VAR
+      token = consumeToken TokenType::IDENTIFIER
+      expr =
+        if currentToken == TokenType::SEMICOLON
+          NullLiteralExpr.new
+        else
+          consumeToken TokenType::EQUAL
+          parse_expr
+        end
+      consumeToken TokenType::SEMICOLON
+      VariableDeclarationStatement.new token.lexeme, expr
     end
 
     private def parse_expr_statement
@@ -225,12 +262,12 @@ module FayrantLang
       when TokenType::NUMBER
         token = consumeToken TokenType::NUMBER
         case token.lexeme[0..1]
-          when "0x"
-            NumberLiteralExpr.new token.lexeme[2..].to_i(16).to_f
-          when "0b"
-            NumberLiteralExpr.new token.lexeme[2..].to_i(2).to_f
-          else
-            NumberLiteralExpr.new token.lexeme.to_f
+        when "0x"
+          NumberLiteralExpr.new token.lexeme[2..].to_i(16).to_f
+        when "0b"
+          NumberLiteralExpr.new token.lexeme[2..].to_i(2).to_f
+        else
+          NumberLiteralExpr.new token.lexeme.to_f
         end
       when TokenType::TRUE
         consumeToken TokenType::TRUE
@@ -242,12 +279,36 @@ module FayrantLang
         consumeToken TokenType::NULL
         NullLiteralExpr.new
       when TokenType::QUOTE
-        # TODO
-        raise Exception.new "String literals are not implemented yet"
+        parse_string
       else
         # TODO
         raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
       end
+    end
+
+    private def parse_string
+      consumeToken TokenType::QUOTE
+      fragments = [] of StringFragment
+      while currentToken.type != TokenType::QUOTE
+        case currentToken.type
+        when TokenType::STRING_FRAGMENT
+          token = consumeToken TokenType::STRING_FRAGMENT
+          fragments << StringLiteralFragment.new token.lexeme
+        when TokenType::L_BRACE
+          consumeToken TokenType::L_BRACE
+          fragments << StringInterpolationFragment.new parse_expr
+          consumeToken TokenType::R_BRACE
+        else
+          # TODO
+          raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
+        end
+      end
+      consumeToken TokenType::QUOTE
+      StringLiteralExpr.new fragments
+    end
+
+    private def eof
+      return @index >= @tokens.size
     end
 
     private def currentToken
@@ -255,11 +316,14 @@ module FayrantLang
     end
 
     private def consumeToken(tt : TokenType)
-      if @tokens[@index].type == tt
+      if eof
+        raise Exception.new "Unexpected end of input, expected #{tt}"
+      elsif @tokens[@index].type == tt
         @index += 1
         return @tokens[@index - 1]
+      else
+        raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme}, expected #{tt}"
       end
-      raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme}, expected #{tt}"
     end
   end
 end
