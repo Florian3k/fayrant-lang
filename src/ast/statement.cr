@@ -10,7 +10,7 @@ module FayrantLang
     end
 
     abstract class Statement
-      abstract def exec(env : Object) : {ExecResult, AnyValue}
+      abstract def exec(ctx : Context) : {ExecResult, AnyValue}
 
       def ==(other)
         false
@@ -24,9 +24,9 @@ module FayrantLang
       def initialize(@name : String, @expr : Expr)
       end
 
-      def exec(env : Object) : {ExecResult, AnyValue}
-        # TODO
-        raise Exception.new "TODO"
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        ctx.create_var(name, expr.eval(ctx))
+        {ExecResult::NONE, NullValue.new}
       end
 
       def ==(other : VariableDeclarationStatement)
@@ -40,9 +40,9 @@ module FayrantLang
       def initialize(@expr : Expr)
       end
 
-      def exec(env : Object) : {ExecResult, AnyValue}
+      def exec(ctx : Context) : {ExecResult, AnyValue}
         expr.eval(ctx)
-        return {ExecResult::NONE, NullValue.new}
+        {ExecResult::NONE, NullValue.new}
       end
 
       def ==(other : ExprStatement)

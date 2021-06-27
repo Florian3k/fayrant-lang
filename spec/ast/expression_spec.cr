@@ -1,5 +1,6 @@
 require "spec"
 require "../../src/ast/expression.cr"
+require "../../src/interpreter/context.cr"
 
 include FayrantLang
 include AST
@@ -24,9 +25,9 @@ describe "FayrantLang::AST Expressions" do
         ex1 = BooleanLiteralExpr.new true
         ex2 = BooleanLiteralExpr.new false
 
-        ex1.eval(Nil).should eq BooleanValue.new true
-        ex1.eval(Nil).should_not eq BooleanValue.new false
-        ex2.eval(Nil).should eq BooleanValue.new false
+        ex1.eval(Context.new).should eq BooleanValue.new true
+        ex1.eval(Context.new).should_not eq BooleanValue.new false
+        ex2.eval(Context.new).should eq BooleanValue.new false
       end
     end
 
@@ -48,9 +49,9 @@ describe "FayrantLang::AST Expressions" do
         ex1 = NumberLiteralExpr.new 3
         ex2 = NumberLiteralExpr.new 7
 
-        ex1.eval(Nil).should eq NumberValue.new 3
-        ex1.eval(Nil).should_not eq NumberValue.new 7
-        ex2.eval(Nil).should eq NumberValue.new 7
+        ex1.eval(Context.new).should eq NumberValue.new 3
+        ex1.eval(Context.new).should_not eq NumberValue.new 7
+        ex2.eval(Context.new).should eq NumberValue.new 7
       end
     end
 
@@ -64,7 +65,7 @@ describe "FayrantLang::AST Expressions" do
 
       it "NullLiteralExpr should evaluate to NullValue" do
         ex = NullLiteralExpr.new
-        ex.eval(Nil).should eq NullValue.new
+        ex.eval(Context.new).should eq NullValue.new
       end
     end
   end
