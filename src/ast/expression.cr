@@ -96,7 +96,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : String
-        UnaryExprToString.new(expr).eval(ctx).getString
+        UnaryExprToString.new(expr).eval(ctx).get_string
       end
 
       def ==(other : StringInterpolationFragment)
@@ -132,7 +132,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        NumberValue.new -@expr.eval(ctx).getNumber
+        NumberValue.new -@expr.eval(ctx).get_number
       end
 
       def ==(other : UnaryExprMinus)
@@ -146,7 +146,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new !@expr.eval(ctx).getBoolean
+        BooleanValue.new !@expr.eval(ctx).get_boolean
       end
 
       def ==(other : UnaryExprNegation)
@@ -160,7 +160,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : AnyValue
-        StringValue.new @expr.eval(ctx).toString
+        StringValue.new @expr.eval(ctx).to_string
       end
 
       def ==(other : UnaryExprToString)
@@ -177,11 +177,11 @@ module FayrantLang
         val = @expr.eval(ctx)
         case val.type
         when ValueType::Number
-          NumberValue.new val.getNumber
+          NumberValue.new val.get_number
         when ValueType::Boolean
-          NumberValue.new val.getBoolean ? 1.0 : 0.0
+          NumberValue.new val.get_boolean ? 1.0 : 0.0
         when ValueType::String
-          val = val.getString.to_f64?
+          val = val.get_string.to_f64?
           if val.is_a?(Float64)
             NumberValue.new val
           else
@@ -211,7 +211,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        NumberValue.new @lhs.eval(ctx).getNumber + @rhs.eval(ctx).getNumber
+        NumberValue.new @lhs.eval(ctx).get_number + @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprPlus)
@@ -225,7 +225,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        NumberValue.new @lhs.eval(ctx).getNumber - @rhs.eval(ctx).getNumber
+        NumberValue.new @lhs.eval(ctx).get_number - @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprMinus)
@@ -239,7 +239,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        NumberValue.new @lhs.eval(ctx).getNumber * @rhs.eval(ctx).getNumber
+        NumberValue.new @lhs.eval(ctx).get_number * @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprMult)
@@ -253,9 +253,9 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        rval = @rhs.eval(ctx).getNumber
+        rval = @rhs.eval(ctx).get_number
         unless rval == 0
-          NumberValue.new @lhs.eval(ctx).getNumber / rval
+          NumberValue.new @lhs.eval(ctx).get_number / rval
         else
           # TODO
           raise Exception.new "TODO"
@@ -273,9 +273,9 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        lval = @lhs.eval(ctx).getNumber
+        lval = @lhs.eval(ctx).get_number
         unless lval == 0
-          NumberValue.new @rhs.eval(ctx).getNumber / lval
+          NumberValue.new @rhs.eval(ctx).get_number / lval
         else
           # TODO
           raise Exception.new "TODO"
@@ -293,9 +293,9 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : NumberValue
-        rval = @rhs.eval(ctx).getNumber
+        rval = @rhs.eval(ctx).get_number
         unless rval == 0
-          NumberValue.new @lhs.eval(ctx).getNumber % rval
+          NumberValue.new @lhs.eval(ctx).get_number % rval
         else
           raise Exception.new "TODO"
         end
@@ -313,7 +313,7 @@ module FayrantLang
 
       def eval(ctx : Context) : NumberValue
         # TODO check for exceptions
-        NumberValue.new @lhs.eval(ctx).getNumber ** @rhs.eval(ctx).getNumber
+        NumberValue.new @lhs.eval(ctx).get_number ** @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprExpt)
@@ -327,7 +327,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).getBoolean && @rhs.eval(ctx).getBoolean
+        BooleanValue.new @lhs.eval(ctx).get_boolean && @rhs.eval(ctx).get_boolean
       end
 
       def ==(other : BinaryExprAnd)
@@ -341,7 +341,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).getBoolean || @rhs.eval(ctx).getBoolean
+        BooleanValue.new @lhs.eval(ctx).get_boolean || @rhs.eval(ctx).get_boolean
       end
 
       def ==(other : BinaryExprOr)
@@ -355,7 +355,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).getNumber > @rhs.eval(ctx).getNumber
+        BooleanValue.new @lhs.eval(ctx).get_number > @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprGt)
@@ -369,7 +369,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).getNumber < @rhs.eval(ctx).getNumber
+        BooleanValue.new @lhs.eval(ctx).get_number < @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprLt)
@@ -383,7 +383,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).getNumber >= @rhs.eval(ctx).getNumber
+        BooleanValue.new @lhs.eval(ctx).get_number >= @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprGe)
@@ -397,7 +397,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).getNumber <= @rhs.eval(ctx).getNumber
+        BooleanValue.new @lhs.eval(ctx).get_number <= @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprLe)
@@ -439,7 +439,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : StringValue
-        StringValue.new @lhs.eval(ctx).toString + @rhs.eval(ctx).toString
+        StringValue.new @lhs.eval(ctx).to_string + @rhs.eval(ctx).to_string
       end
 
       def ==(other : BinaryExprConcat)
@@ -457,7 +457,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : AnyValue
-        fn.eval(ctx).getFunction.call(args.map { |expr| expr.eval(ctx) })
+        fn.eval(ctx).get_function.call(args.map { |expr| expr.eval(ctx) })
       end
 
       def ==(other : FunctionCallExpr)

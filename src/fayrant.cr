@@ -10,7 +10,7 @@ def initial_context
     {
       "print",
       BuiltinFunction.new 1 do |args|
-        puts args[0].toString
+        puts args[0].to_string
         NullValue.new
       end,
     },

@@ -57,7 +57,7 @@ module FayrantLang
 
       def exec(ctx : Context) : {ExecResult, AnyValue}
         body =
-          if cond.eval(ctx).getBoolean
+          if cond.eval(ctx).get_boolean
             true_body
           else
             false_body

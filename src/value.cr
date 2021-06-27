@@ -17,25 +17,25 @@ module FayrantLang
     def initialize(@type : ValueType)
     end
 
-    abstract def toString
+    abstract def to_string
 
-    def getBoolean : Bool
+    def get_boolean : Bool
       raise ValueError.new ValueType::Boolean, @type
     end
 
-    def getNumber : Float64
+    def get_number : Float64
       raise ValueError.new ValueType::Number, @type
     end
 
-    def getString : String
+    def get_string : String
       raise ValueError.new ValueType::String, @type
     end
 
-    def getObject : ObjectValue
+    def get_object : ObjectValue
       raise ValueError.new ValueType::Object, @type
     end
 
-    def getFunction : FunctionValue
+    def get_function : FunctionValue
       raise ValueError.new ValueType::Function, @type
     end
 
@@ -49,7 +49,7 @@ module FayrantLang
       super ValueType::Null
     end
 
-    def toString
+    def to_string
       "null"
     end
 
@@ -65,11 +65,11 @@ module FayrantLang
       super ValueType::Boolean
     end
 
-    def toString
+    def to_string
       @value.to_s
     end
 
-    def getBoolean
+    def get_boolean
       @value
     end
 
@@ -85,11 +85,11 @@ module FayrantLang
       super ValueType::Number
     end
 
-    def toString
+    def to_string
       @value.to_s
     end
 
-    def getNumber
+    def get_number
       @value
     end
 
@@ -105,11 +105,11 @@ module FayrantLang
       super ValueType::String
     end
 
-    def toString
+    def to_string
       @value
     end
 
-    def getString
+    def get_string
       @value
     end
 
@@ -128,11 +128,11 @@ module FayrantLang
       @uuid = UUID.random
     end
 
-    def toString
+    def to_string
       "[object #{@classType}]"
     end
 
-    def getObject
+    def get_object
       self
     end
 
@@ -150,11 +150,11 @@ module FayrantLang
       @uuid = UUID.random
     end
 
-    def getFunction
+    def get_function
       self
     end
 
-    def toString
+    def to_string
       "[Function]"
     end
 

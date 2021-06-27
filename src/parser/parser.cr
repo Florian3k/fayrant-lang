@@ -18,7 +18,7 @@ module FayrantLang
     end
 
     private def parse_statement : Statement
-      case currentToken.type
+      case current_token.type
       when TokenType::FUNC
         parse_function_statement
       when TokenType::CLASS
@@ -44,73 +44,73 @@ module FayrantLang
     end
 
     private def parse_function_statement
-      consumeToken TokenType::FUNC
-      name_token = consumeToken TokenType::IDENTIFIER
-      consumeToken TokenType::L_PAREN
+      consume_token TokenType::FUNC
+      name_token = consume_token TokenType::IDENTIFIER
+      consume_token TokenType::L_PAREN
       params = [] of Token
-      while currentToken.type != TokenType::R_PAREN
-        params << consumeToken TokenType::IDENTIFIER
-        if currentToken.type == TokenType::R_PAREN
+      while current_token.type != TokenType::R_PAREN
+        params << consume_token TokenType::IDENTIFIER
+        if current_token.type == TokenType::R_PAREN
           break
         end
-        consumeToken TokenType::COMMA
+        consume_token TokenType::COMMA
       end
-      consumeToken TokenType::R_PAREN
+      consume_token TokenType::R_PAREN
       body = parse_body
       FunctionDeclarationStatement.new name_token.lexeme, params.map { |param| param.lexeme }, body
     end
 
     private def parse_if_statement
-      consumeToken TokenType::IF
-      consumeToken TokenType::L_PAREN
+      consume_token TokenType::IF
+      consume_token TokenType::L_PAREN
       cond = parse_expr
-      consumeToken TokenType::R_PAREN
+      consume_token TokenType::R_PAREN
       true_body = parse_body
       false_body = [] of Statement
-      if !eof && currentToken.type == TokenType::ELSE
-        consumeToken TokenType::ELSE
+      if !eof && current_token.type == TokenType::ELSE
+        consume_token TokenType::ELSE
         false_body = parse_body
       end
       IfStatement.new cond, true_body, false_body
     end
 
     private def parse_var_statement
-      consumeToken TokenType::VAR
-      token = consumeToken TokenType::IDENTIFIER
+      consume_token TokenType::VAR
+      token = consume_token TokenType::IDENTIFIER
       expr =
-        if currentToken == TokenType::SEMICOLON
+        if current_token == TokenType::SEMICOLON
           NullLiteralExpr.new
         else
-          consumeToken TokenType::EQUAL
+          consume_token TokenType::EQUAL
           parse_expr
         end
-      consumeToken TokenType::SEMICOLON
+      consume_token TokenType::SEMICOLON
       VariableDeclarationStatement.new token.lexeme, expr
     end
 
     private def parse_return_statement
-      consumeToken TokenType::RETURN
+      consume_token TokenType::RETURN
       expr = NullLiteralExpr.new
-      if currentToken.type != TokenType::SEMICOLON
+      if current_token.type != TokenType::SEMICOLON
         expr = parse_expr
       end
-      consumeToken TokenType::SEMICOLON
+      consume_token TokenType::SEMICOLON
       ReturnStatement.new expr
     end
 
     private def parse_body
-      consumeToken TokenType::L_BRACE
+      consume_token TokenType::L_BRACE
       statements = [] of Statement
-      while currentToken.type != TokenType::R_BRACE
+      while current_token.type != TokenType::R_BRACE
         statements << parse_statement
       end
-      consumeToken TokenType::R_BRACE
+      consume_token TokenType::R_BRACE
       statements
     end
 
     private def parse_expr_statement
       expr = parse_expr
-      consumeToken TokenType::SEMICOLON
+      consume_token TokenType::SEMICOLON
       ExprStatement.new expr
     end
 
@@ -121,8 +121,8 @@ module FayrantLang
     private def parse_expr_or
       expr = parse_expr_and
       while true
-        if currentToken.type == TokenType::OP_OR
-          consumeToken TokenType::OP_OR
+        if current_token.type == TokenType::OP_OR
+          consume_token TokenType::OP_OR
           expr = BinaryExprOr.new expr, parse_expr_and
         else
           break
@@ -134,8 +134,8 @@ module FayrantLang
     private def parse_expr_and
       expr = parse_expr_equality
       while true
-        if currentToken.type == TokenType::OP_AND
-          consumeToken TokenType::OP_AND
+        if current_token.type == TokenType::OP_AND
+          consume_token TokenType::OP_AND
           expr = BinaryExprAnd.new expr, parse_expr_equality
         else
           break
@@ -147,12 +147,12 @@ module FayrantLang
     private def parse_expr_equality
       expr = parse_expr_compare
       while true
-        case currentToken.type
+        case current_token.type
         when TokenType::OP_EQ
-          consumeToken TokenType::OP_EQ
+          consume_token TokenType::OP_EQ
           expr = BinaryExprEq.new expr, parse_expr_compare
         when TokenType::OP_NEQ
-          consumeToken TokenType::OP_NEQ
+          consume_token TokenType::OP_NEQ
           expr = BinaryExprNeq.new expr, parse_expr_compare
         else
           break
@@ -164,18 +164,18 @@ module FayrantLang
     private def parse_expr_compare
       expr = parse_expr_concat
       while true
-        case currentToken.type
+        case current_token.type
         when TokenType::OP_GT
-          consumeToken TokenType::OP_GT
+          consume_token TokenType::OP_GT
           expr = BinaryExprGt.new expr, parse_expr_concat
         when TokenType::OP_LT
-          consumeToken TokenType::OP_LT
+          consume_token TokenType::OP_LT
           expr = BinaryExprLt.new expr, parse_expr_concat
         when TokenType::OP_GE
-          consumeToken TokenType::OP_GE
+          consume_token TokenType::OP_GE
           expr = BinaryExprGe.new expr, parse_expr_concat
         when TokenType::OP_LE
-          consumeToken TokenType::OP_LE
+          consume_token TokenType::OP_LE
           expr = BinaryExprLe.new expr, parse_expr_concat
         else
           break
@@ -187,8 +187,8 @@ module FayrantLang
     private def parse_expr_concat
       expr = parse_expr_plus_minus
       while true
-        if currentToken.type == TokenType::OP_CONCAT
-          consumeToken TokenType::OP_CONCAT
+        if current_token.type == TokenType::OP_CONCAT
+          consume_token TokenType::OP_CONCAT
           expr = BinaryExprConcat.new expr, parse_expr_plus_minus
         else
           break
@@ -200,12 +200,12 @@ module FayrantLang
     private def parse_expr_plus_minus
       expr = parse_expr_div_inv
       while true
-        case currentToken.type
+        case current_token.type
         when TokenType::OP_PLUS
-          consumeToken TokenType::OP_PLUS
+          consume_token TokenType::OP_PLUS
           expr = BinaryExprPlus.new expr, parse_expr_div_inv
         when TokenType::OP_MINUS
-          consumeToken TokenType::OP_MINUS
+          consume_token TokenType::OP_MINUS
           expr = BinaryExprMinus.new expr, parse_expr_div_inv
         else
           break
@@ -216,8 +216,8 @@ module FayrantLang
 
     private def parse_expr_div_inv
       expr = parse_expr_times_div_mod
-      if currentToken.type == TokenType::OP_DIV_INV
-        consumeToken TokenType::OP_DIV_INV
+      if current_token.type == TokenType::OP_DIV_INV
+        consume_token TokenType::OP_DIV_INV
         BinaryExprDivInv.new expr, parse_expr_div_inv
       else
         expr
@@ -227,15 +227,15 @@ module FayrantLang
     private def parse_expr_times_div_mod
       expr = parse_expr_expt
       while true
-        case currentToken.type
+        case current_token.type
         when TokenType::OP_TIMES
-          consumeToken TokenType::OP_TIMES
+          consume_token TokenType::OP_TIMES
           expr = BinaryExprMult.new expr, parse_expr_expt
         when TokenType::OP_DIV
-          consumeToken TokenType::OP_DIV
+          consume_token TokenType::OP_DIV
           expr = BinaryExprDiv.new expr, parse_expr_expt
         when TokenType::OP_MOD
-          consumeToken TokenType::OP_MOD
+          consume_token TokenType::OP_MOD
           expr = BinaryExprMod.new expr, parse_expr_expt
         else
           break
@@ -246,8 +246,8 @@ module FayrantLang
 
     private def parse_expr_expt
       expr = parse_expr_unary
-      if currentToken.type == TokenType::OP_EXPT
-        consumeToken TokenType::OP_EXPT
+      if current_token.type == TokenType::OP_EXPT
+        consume_token TokenType::OP_EXPT
         BinaryExprExpt.new expr, parse_expr_expt
       else
         expr
@@ -255,18 +255,18 @@ module FayrantLang
     end
 
     private def parse_expr_unary
-      case currentToken.type
+      case current_token.type
       when TokenType::OP_MINUS
-        consumeToken TokenType::OP_MINUS
+        consume_token TokenType::OP_MINUS
         UnaryExprMinus.new parse_expr_unary
       when TokenType::OP_NEG
-        consumeToken TokenType::OP_NEG
+        consume_token TokenType::OP_NEG
         UnaryExprNegation.new parse_expr_unary
       when TokenType::OP_TO_STR
-        consumeToken TokenType::OP_TO_STR
+        consume_token TokenType::OP_TO_STR
         UnaryExprToString.new parse_expr_unary
       when TokenType::OP_TO_NUM
-        consumeToken TokenType::OP_TO_NUM
+        consume_token TokenType::OP_TO_NUM
         UnaryExprToNumber.new parse_expr_unary
       else
         parse_expr_call_access
@@ -276,22 +276,22 @@ module FayrantLang
     private def parse_expr_call_access
       expr = parse_expr_basic
       while true
-        case currentToken.type
+        case current_token.type
         when TokenType::DOT
-          consumeToken TokenType::DOT
-          identifier = consumeToken TokenType::IDENTIFIER
+          consume_token TokenType::DOT
+          identifier = consume_token TokenType::IDENTIFIER
           expr = ObjectAccessExpr.new expr, identifier.lexeme
         when TokenType::L_PAREN
-          consumeToken TokenType::L_PAREN
+          consume_token TokenType::L_PAREN
           args = [] of Expr
-          while currentToken.type != TokenType::R_PAREN
+          while current_token.type != TokenType::R_PAREN
             args << parse_expr
-            if currentToken.type == TokenType::R_PAREN
+            if current_token.type == TokenType::R_PAREN
               break
             end
-            consumeToken TokenType::COMMA
+            consume_token TokenType::COMMA
           end
-          consumeToken TokenType::R_PAREN
+          consume_token TokenType::R_PAREN
           expr = FunctionCallExpr.new expr, args
         else
           break
@@ -301,17 +301,17 @@ module FayrantLang
     end
 
     private def parse_expr_basic
-      case currentToken.type
+      case current_token.type
       when TokenType::L_PAREN
-        consumeToken TokenType::L_PAREN
+        consume_token TokenType::L_PAREN
         expr = parse_expr
-        consumeToken TokenType::R_PAREN
+        consume_token TokenType::R_PAREN
         expr
       when TokenType::IDENTIFIER
-        token = consumeToken TokenType::IDENTIFIER
+        token = consume_token TokenType::IDENTIFIER
         VariableExpr.new token.lexeme
       when TokenType::NUMBER
-        token = consumeToken TokenType::NUMBER
+        token = consume_token TokenType::NUMBER
         case token.lexeme[0..1]
         when "0x"
           NumberLiteralExpr.new token.lexeme[2..].to_i(16).to_f
@@ -321,40 +321,40 @@ module FayrantLang
           NumberLiteralExpr.new token.lexeme.to_f
         end
       when TokenType::TRUE
-        consumeToken TokenType::TRUE
+        consume_token TokenType::TRUE
         BooleanLiteralExpr.new true
       when TokenType::FALSE
-        consumeToken TokenType::FALSE
+        consume_token TokenType::FALSE
         BooleanLiteralExpr.new false
       when TokenType::NULL
-        consumeToken TokenType::NULL
+        consume_token TokenType::NULL
         NullLiteralExpr.new
       when TokenType::QUOTE
         parse_string
       else
         # TODO
-        raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
+        raise Exception.new "Unexpected token #{current_token.type}: #{current_token.lexeme} "
       end
     end
 
     private def parse_string
-      consumeToken TokenType::QUOTE
+      consume_token TokenType::QUOTE
       fragments = [] of StringFragment
-      while currentToken.type != TokenType::QUOTE
-        case currentToken.type
+      while current_token.type != TokenType::QUOTE
+        case current_token.type
         when TokenType::STRING_FRAGMENT
-          token = consumeToken TokenType::STRING_FRAGMENT
+          token = consume_token TokenType::STRING_FRAGMENT
           fragments << StringLiteralFragment.new token.lexeme
         when TokenType::L_BRACE
-          consumeToken TokenType::L_BRACE
+          consume_token TokenType::L_BRACE
           fragments << StringInterpolationFragment.new parse_expr
-          consumeToken TokenType::R_BRACE
+          consume_token TokenType::R_BRACE
         else
           # TODO
-          raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme} "
+          raise Exception.new "Unexpected token #{current_token.type}: #{current_token.lexeme} "
         end
       end
-      consumeToken TokenType::QUOTE
+      consume_token TokenType::QUOTE
       StringLiteralExpr.new fragments
     end
 
@@ -362,18 +362,18 @@ module FayrantLang
       return @index >= @tokens.size
     end
 
-    private def currentToken
+    private def current_token
       return @tokens[@index]
     end
 
-    private def consumeToken(tt : TokenType)
+    private def consume_token(tt : TokenType)
       if eof
         raise Exception.new "Unexpected end of input, expected #{tt}"
       elsif @tokens[@index].type == tt
         @index += 1
         return @tokens[@index - 1]
       else
-        raise Exception.new "Unexpected token #{currentToken.type}: #{currentToken.lexeme}, expected #{tt}"
+        raise Exception.new "Unexpected token #{current_token.type}: #{current_token.lexeme}, expected #{tt}"
       end
     end
   end
