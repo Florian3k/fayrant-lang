@@ -166,18 +166,34 @@ module FayrantLang
   end
 
   class UserFunction < FunctionValue
-    def initialize(@params : Array(String), @body : Array(Object)) # TODO
-      super params.length
+    def initialize(@params : Array(String), @body : Array(Statement), @ctx : Context)
+      super params.size
     end
 
     def call(args : Array(AnyValue)) : AnyValue
-      NullValue.new # TODO
+      fn_ctx = Context.new @ctx
+      @params.zip(args) do |param, value|
+        fn_ctx.create_var(param, value)
+      end
+      res = exec_body @body, fn_ctx
+      case res[0]
+      when ExecResult::NONE
+        NullValue.new
+      when ExecResult::RETURN
+        res[1]
+      when ExecResult::BREAK
+        raise Exception.new "TODO - break is invalid outside of loop"
+      when ExecResult::CONTINUE
+        raise Exception.new "TODO - continue is invalid outside of loop"
+      else
+        raise Exception.new "UNREACHABLE CODE"
+      end
     end
   end
 
   class UserMethod < FunctionValue
-    def initialize(@this : ObjectValue, @params : Array(String), @body : Array(Object)) # TODO
-      super params.length
+    def initialize(@this : ObjectValue, @params : Array(String), @body : Array(Object), @ctx : Context) # TODO
+      super params.size
     end
 
     def call(args : Array(AnyValue)) : AnyValue

@@ -9,8 +9,12 @@ module FayrantLang
       CONTINUE
     end
 
+    def none_result
+      {ExecResult::NONE, NullValue.new}
+    end
+
     def exec_body(body : Array(Statement), ctx : Context) : {ExecResult, AnyValue}
-      init = {ExecResult::NONE, NullValue.new}
+      init = none_result
       body.reduce init do |res, statement|
         res[0] == ExecResult::NONE ? statement.exec(ctx) : res
       end
@@ -21,6 +25,25 @@ module FayrantLang
 
       def ==(other)
         false
+      end
+    end
+
+    class FunctionDeclarationStatement < Statement
+      getter name
+      getter params
+      getter body
+
+      def initialize(@name : String, @params : Array(String), @body : Array(Statement))
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        fn = UserFunction.new params, body, ctx
+        ctx.create_var(@name, fn)
+        none_result
+      end
+
+      def ==(other : FunctionDeclarationStatement)
+        name == other.name && params == other.params && body == other.body
       end
     end
 
@@ -56,11 +79,27 @@ module FayrantLang
 
       def exec(ctx : Context) : {ExecResult, AnyValue}
         ctx.create_var(name, expr.eval(ctx))
-        {ExecResult::NONE, NullValue.new}
+        none_result
       end
 
       def ==(other : VariableDeclarationStatement)
         name == other.name && expr == other.expr
+      end
+    end
+
+    class ReturnStatement < Statement
+      getter expr
+
+      def initialize(@expr : Expr)
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        retval = expr.eval(ctx)
+        {ExecResult::RETURN, retval}
+      end
+
+      def ==(other : ReturnStatement)
+        expr == other.expr
       end
     end
 
@@ -72,7 +111,7 @@ module FayrantLang
 
       def exec(ctx : Context) : {ExecResult, AnyValue}
         expr.eval(ctx)
-        {ExecResult::NONE, NullValue.new}
+        none_result
       end
 
       def ==(other : ExprStatement)

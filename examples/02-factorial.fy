@@ -1,15 +1,3 @@
-func factorial_iter(x) {
-  if (x < 1) {
-    return 1;
-  }
-  var res = 1;
-  while (x > 1) {
-    res *= x;
-    x -= 1;
-  }
-  return res;
-}
-
 func factorial_rec(x) {
   if (x < 1) {
     return 1;
@@ -18,9 +6,8 @@ func factorial_rec(x) {
 }
 
 var x = #input();
-if (x == null | x < 1) {
+if (x == null | x < 0) {
   print("Invalid number");
-  return;
+} else {
+  print("Rec: {factorial_rec(x)}");
 }
-print("Iter: {factorial_iter(x)}");
-print("Rec: {factorial_rec(x)}");

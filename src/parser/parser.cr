@@ -20,7 +20,7 @@ module FayrantLang
     private def parse_statement : Statement
       case currentToken.type
       when TokenType::FUNC
-        raise Exception.new "TODO"
+        parse_function_statement
       when TokenType::CLASS
         raise Exception.new "TODO"
       when TokenType::IF
@@ -32,7 +32,7 @@ module FayrantLang
       when TokenType::VAR
         parse_var_statement
       when TokenType::RETURN
-        raise Exception.new "TODO"
+        parse_return_statement
       when TokenType::BREAK
         raise Exception.new "TODO"
       when TokenType::CONTINUE
@@ -41,6 +41,23 @@ module FayrantLang
         # TODO - assignment statement
         parse_expr_statement
       end
+    end
+
+    private def parse_function_statement
+      consumeToken TokenType::FUNC
+      name_token = consumeToken TokenType::IDENTIFIER
+      consumeToken TokenType::L_PAREN
+      params = [] of Token
+      while currentToken.type != TokenType::R_PAREN
+        params << consumeToken TokenType::IDENTIFIER
+        if currentToken.type == TokenType::R_PAREN
+          break
+        end
+        consumeToken TokenType::COMMA
+      end
+      consumeToken TokenType::R_PAREN
+      body = parse_body
+      FunctionDeclarationStatement.new name_token.lexeme, params.map { |param| param.lexeme }, body
     end
 
     private def parse_if_statement
@@ -69,6 +86,16 @@ module FayrantLang
         end
       consumeToken TokenType::SEMICOLON
       VariableDeclarationStatement.new token.lexeme, expr
+    end
+
+    private def parse_return_statement
+      consumeToken TokenType::RETURN
+      expr = NullLiteralExpr.new
+      if currentToken.type != TokenType::SEMICOLON
+        expr = parse_expr
+      end
+      consumeToken TokenType::SEMICOLON
+      ReturnStatement.new expr
     end
 
     private def parse_body

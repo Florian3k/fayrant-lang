@@ -173,7 +173,7 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
+      def eval(ctx : Context) : AnyValue
         val = @expr.eval(ctx)
         case val.type
         when ValueType::Number
@@ -185,12 +185,10 @@ module FayrantLang
           if val.is_a?(Float64)
             NumberValue.new val
           else
-            # TODO
-            raise Exception.new "TODO"
+            NullValue.new
           end
         else
-          # TODO
-          raise Exception.new "TODO"
+          NullValue.new
         end
       end
 

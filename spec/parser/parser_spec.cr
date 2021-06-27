@@ -244,4 +244,40 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse simple function" do
+    tokens = Lexer.new("func test() {}").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(FunctionDeclarationStatement)
+    expected = FunctionDeclarationStatement.new(
+      "test",
+      [] of String,
+      [] of Statement,
+    )
+    result.should eq expected
+  end
+
+  it "should parse function with params and return statement" do
+    input = "func test(a, b) {\n" \
+            "  var x = a + b; \n" \
+            "  return x + 3;  \n" \
+            "  return;        \n" \
+            "}"
+    tokens = Lexer.new(input).scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(FunctionDeclarationStatement)
+    expected = FunctionDeclarationStatement.new(
+      "test",
+      ["a", "b"],
+      [
+        VariableDeclarationStatement.new(
+          "x",
+          BinaryExprPlus.new(VariableExpr.new("a"), VariableExpr.new("b")),
+        ),
+        ReturnStatement.new(
+          BinaryExprPlus.new(VariableExpr.new("x"), NumberLiteralExpr.new(3))
+        ),
+        ReturnStatement.new(NullLiteralExpr.new),
+      ],
+    )
+    result.should eq expected
+  end
 end
