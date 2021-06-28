@@ -26,17 +26,17 @@ module FayrantLang
       when TokenType::IF
         parse_if_statement
       when TokenType::WHILE
-        raise Exception.new "TODO"
+        parse_while_statement
       when TokenType::FOR
-        raise Exception.new "TODO"
+        parse_for_statement
       when TokenType::VAR
         parse_var_statement
       when TokenType::RETURN
         parse_return_statement
       when TokenType::BREAK
-        raise Exception.new "TODO"
+        parse_break_statement
       when TokenType::CONTINUE
-        raise Exception.new "TODO"
+        parse_continue_statement
       else
         parse_expr_or_assignment_statement
       end
@@ -83,6 +83,52 @@ module FayrantLang
       IfStatement.new cond, true_body, false_body
     end
 
+    private def parse_while_statement
+      consume_token TokenType::WHILE
+      consume_token TokenType::L_PAREN
+      cond = parse_expr
+      consume_token TokenType::R_PAREN
+      body = parse_body
+      WhileStatement.new cond, body
+    end
+
+    private def parse_for_statement
+      consume_token TokenType::FOR
+      consume_token TokenType::L_PAREN
+
+      init =
+        case current_token.type
+        when TokenType::SEMICOLON
+          consume_token TokenType::SEMICOLON
+          EmptyStatement.new
+        when TokenType::VAR
+          parse_var_statement
+        else
+          parse_expr_or_assignment_statement
+        end
+
+      cond =
+        if current_token.type == TokenType::SEMICOLON
+          BooleanLiteralExpr.new true
+        else
+          parse_expr
+        end
+      consume_token TokenType::SEMICOLON
+
+      step =
+        if current_token.type == TokenType::R_PAREN
+          EmptyStatement.new
+        else
+          parse_expr_or_assignment_statement_no_semicolon
+        end
+
+      consume_token TokenType::R_PAREN
+
+      body = parse_body
+
+      ForStatement.new init, cond, step, body
+    end
+
     private def parse_var_statement
       consume_token TokenType::VAR
       token = consume_token TokenType::IDENTIFIER
@@ -97,11 +143,18 @@ module FayrantLang
       VariableDeclarationStatement.new token.lexeme, expr
     end
 
-    private def parse_expr_or_assignment_statement  : Statement
+    private def parse_expr_or_assignment_statement : Statement
+      statement = parse_expr_or_assignment_statement_no_semicolon
+      consume_token TokenType::SEMICOLON
+      statement
+    end
+
+    private def parse_expr_or_assignment_statement_no_semicolon : Statement
       expr = parse_expr
       case
       when current_token.type == TokenType::SEMICOLON
-        consume_token TokenType::SEMICOLON
+        ExprStatement.new expr
+      when current_token.type == TokenType::R_PAREN
         ExprStatement.new expr
       when expr.is_a?(VariableExpr)
         rhs_expr = parse_assignment_statement_expr expr
@@ -110,7 +163,7 @@ module FayrantLang
         rhs_expr = parse_assignment_statement_expr expr
         ObjectFieldAssignmentStatement.new expr.obj, expr.field, rhs_expr
       else
-        consume_token TokenType::SEMICOLON
+        raise Exception.new "Expected semicolon or assignment operator!" # TODO
         EmptyStatement.new
       end
     end
@@ -135,7 +188,6 @@ module FayrantLang
       end
       assign_op = consume_token token.type
       rhs = parse_expr
-      consume_token TokenType::SEMICOLON
       map[token.type].call(rhs)
     end
 
@@ -147,6 +199,18 @@ module FayrantLang
       end
       consume_token TokenType::SEMICOLON
       ReturnStatement.new expr
+    end
+
+    private def parse_break_statement
+      consume_token TokenType::BREAK
+      consume_token TokenType::SEMICOLON
+      BreakStatement.new
+    end
+
+    private def parse_continue_statement
+      consume_token TokenType::CONTINUE
+      consume_token TokenType::SEMICOLON
+      ContinueStatement.new
     end
 
     private def parse_body
@@ -171,12 +235,6 @@ module FayrantLang
       end
       consume_token TokenType::R_PAREN
       params.map { |param| param.lexeme }
-    end
-
-    private def parse_expr_statement
-      expr = parse_expr
-      consume_token TokenType::SEMICOLON
-      ExprStatement.new expr
     end
 
     private def parse_expr
