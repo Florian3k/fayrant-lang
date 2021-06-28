@@ -7,38 +7,21 @@ Authors:
 - Maciej Witkowski [@MaciejWitkowskiDev](https://github.com/MaciejWitkowskiDev)
 
 ## Work progress / TODO
-- [x] Lexer - mostly (like 98%) done
-  - [ ] unicode escapes
-  - [ ] add more tests
+- [x] Lexer - 100% done
 - [ ] AST
-  - [ ] Statement - 0% done
-    - [ ] TODO add statements to this list
-  - [ ] Expr
-    - [x] Basic literals done
-    - [x] Unary expr done
-      - [ ] add tests
-    - [x] Binary expr done
-      - [ ] add tests
-    - [ ] Variable expr
-    - [ ] Object access expr
-    - [ ] Function call expr
-- [ ] Parser - 1% done
+  - [ ] Statement - 90% done
+    - [ ] For loop, while loop
+    - [ ] Assignments
+  - [x] Expr - 100% done
+- [ ] Parser - 90% done
   - [ ] Statement parser
-  - [ ] Expr parser
-    - [x] Literal
-      - [ ] String literals
-    - [ ] Variables
-    - [x] Grouping
-    - [x] Unary
-    - [ ] Binary - partially done
-    - [ ] Object access
-    - [ ] Function call
-- [ ] Other
-  - [ ] builtin classes/functions - 0% done
-    - [ ] Array
-    - [ ] Dict
-    - [ ] File (?)
-    - [ ] Math object (?)
+  - [x] Expr parser
+- [ ] builtin classes/functions - 0% done
+  - [x] input / print
+  - [ ] Array
+  - [ ] Dict
+  - [ ] File (?)
+  - [ ] Math object (?)
 
 ## Basic syntax
 
