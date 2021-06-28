@@ -245,6 +245,81 @@ describe "FayrantLang Parser" do
     result.should eq expected
   end
 
+  it "should parse 'while (true) { print(5); }'" do
+    tokens = Lexer.new("while (true) { print(5); }").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(WhileStatement)
+    expected = WhileStatement.new(
+      BooleanLiteralExpr.new(true),
+      [
+        ExprStatement.new(
+          FunctionCallExpr.new(
+            VariableExpr.new("print"),
+            [NumberLiteralExpr.new(5)] of Expr,
+          )
+        ),
+      ] of Statement,
+    )
+    result.should eq expected
+  end
+
+  it "should parse 'for (;;) { print(5); }'" do
+    tokens = Lexer.new("for (;;) { print(5); }").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ForStatement)
+    expected = ForStatement.new(
+      EmptyStatement.new,
+      BooleanLiteralExpr.new(true),
+      EmptyStatement.new,
+      [
+        ExprStatement.new(
+          FunctionCallExpr.new(
+            VariableExpr.new("print"),
+            [NumberLiteralExpr.new(5)] of Expr,
+          )
+        ),
+      ] of Statement,
+    )
+    result.should eq expected
+  end
+
+  it "should parse 'for (var x = 0; x < 5; x += 1) { print(x); }'" do
+    tokens = Lexer.new("for (var x = 0; x < 5; x += 1) { print(x); }").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ForStatement)
+    expected = ForStatement.new(
+      VariableDeclarationStatement.new(
+        "x",
+        NumberLiteralExpr.new(0),
+      ),
+      BinaryExprLt.new(VariableExpr.new("x"), NumberLiteralExpr.new(5)),
+      VariableAssignmentStatement.new(
+        "x",
+        BinaryExprPlus.new(VariableExpr.new("x"), NumberLiteralExpr.new(1))
+      ),
+      [
+        ExprStatement.new(
+          FunctionCallExpr.new(
+            VariableExpr.new("print"),
+            [VariableExpr.new("x")] of Expr,
+          )
+        ),
+      ] of Statement,
+    )
+    result.should eq expected
+  end
+
+  it "should parse 'break;'" do
+    tokens = Lexer.new("break;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(BreakStatement)
+    expected = BreakStatement.new
+    result.should eq expected
+  end
+
+  it "should parse 'continue;'" do
+    tokens = Lexer.new("continue;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ContinueStatement)
+    expected = ContinueStatement.new
+    result.should eq expected
+  end
+
   it "should parse simple function" do
     tokens = Lexer.new("func test() {}").scan_tokens
     result = Parser.new(tokens).parse_program[0].as(FunctionDeclarationStatement)

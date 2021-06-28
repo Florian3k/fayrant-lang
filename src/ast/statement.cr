@@ -110,6 +110,61 @@ module FayrantLang
       end
     end
 
+    class WhileStatement < Statement
+      getter cond
+      getter body
+
+      def initialize(@cond : Expr, @body : Array(Statement))
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        while cond.eval(ctx).get_boolean
+          inner_ctx = Context.new ctx
+          res = exec_body body, inner_ctx
+          if res[0] == ExecResult::BREAK
+            break
+          elsif res[0] == ExecResult::RETURN
+            return res
+          end
+        end
+        none_result
+      end
+
+      def ==(other : WhileStatement)
+        cond == other.cond && body == other.body
+      end
+    end
+
+    class ForStatement < Statement
+      getter init
+      getter cond
+      getter step
+      getter body
+
+      def initialize(@init : Statement, @cond : Expr, @step : Statement, @body : Array(Statement))
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        outer_ctx = Context.new ctx
+        init.exec(outer_ctx)
+        while cond.eval(outer_ctx).get_boolean
+          inner_ctx = Context.new outer_ctx
+          res = exec_body body, inner_ctx
+          if res[0] == ExecResult::BREAK
+            break
+          elsif res[0] == ExecResult::RETURN
+            return res
+          end
+          step.exec(outer_ctx)
+        end
+        none_result
+      end
+
+      def ==(other : ForStatement)
+        init == other.init && cond == other.cond && step == other.step && body == other.body
+      end
+    end
+
     class VariableDeclarationStatement < Statement
       getter name
       getter expr
@@ -176,6 +231,26 @@ module FayrantLang
 
       def ==(other : ReturnStatement)
         expr == other.expr
+      end
+    end
+
+    class BreakStatement < Statement
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        {ExecResult::BREAK, NullValue.new}
+      end
+
+      def ==(other : BreakStatement)
+        true
+      end
+    end
+
+    class ContinueStatement < Statement
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        {ExecResult::CONTINUE, NullValue.new}
+      end
+
+      def ==(other : ContinueStatement)
+        true
       end
     end
 
