@@ -38,17 +38,7 @@ module FayrantLang
       when TokenType::CONTINUE
         raise Exception.new "TODO"
       else
-        if current_token.type == TokenType::IDENTIFIER &&
-           @tokens[@index + 1].type == TokenType::EQUAL
-          parse_variable_assignment_statement
-        elsif current_token.type == TokenType::IDENTIFIER &&
-              @tokens[@index + 1].type == TokenType::DOT &&
-              @tokens[@index + 2].type == TokenType::IDENTIFIER &&
-              @tokens[@index + 3].type == TokenType::EQUAL
-          parse_object_field_assignment_statement
-        else
-          parse_expr_statement
-        end
+        parse_expr_or_assignment_statement
       end
     end
 
@@ -107,22 +97,46 @@ module FayrantLang
       VariableDeclarationStatement.new token.lexeme, expr
     end
 
-    private def parse_variable_assignment_statement
-      name_token = consume_token TokenType::IDENTIFIER
-      consume_token TokenType::EQUAL
+    private def parse_expr_or_assignment_statement  : Statement
       expr = parse_expr
-      consume_token TokenType::SEMICOLON
-      VariableAssignmentStatement.new name_token.lexeme, expr
+      case
+      when current_token.type == TokenType::SEMICOLON
+        consume_token TokenType::SEMICOLON
+        ExprStatement.new expr
+      when expr.is_a?(VariableExpr)
+        rhs_expr = parse_assignment_statement_expr expr
+        VariableAssignmentStatement.new expr.name, rhs_expr
+      when expr.is_a?(ObjectAccessExpr)
+        rhs_expr = parse_assignment_statement_expr expr
+        ObjectFieldAssignmentStatement.new expr.obj, expr.field, rhs_expr
+      else
+        consume_token TokenType::SEMICOLON
+        EmptyStatement.new
+      end
     end
 
-    private def parse_object_field_assignment_statement
-      obj_name_token = consume_token TokenType::IDENTIFIER
-      consume_token TokenType::DOT
-      field_name_token = consume_token TokenType::IDENTIFIER
-      consume_token TokenType::EQUAL
-      expr = parse_expr
+    private def parse_assignment_statement_expr(lhs : Expr) : Expr
+      map = {
+        TokenType::EQUAL         => ->(rhs : Expr) { rhs },
+        TokenType::EQUAL_PLUS    => ->(rhs : Expr) { BinaryExprPlus.new(lhs, rhs) },
+        TokenType::EQUAL_MINUS   => ->(rhs : Expr) { BinaryExprMinus.new(lhs, rhs) },
+        TokenType::EQUAL_TIMES   => ->(rhs : Expr) { BinaryExprMult.new(lhs, rhs) },
+        TokenType::EQUAL_DIV     => ->(rhs : Expr) { BinaryExprDiv.new(lhs, rhs) },
+        TokenType::EQUAL_DIV_INV => ->(rhs : Expr) { BinaryExprDivInv.new(lhs, rhs) },
+        TokenType::EQUAL_MOD     => ->(rhs : Expr) { BinaryExprMod.new(lhs, rhs) },
+        TokenType::EQUAL_EXPT    => ->(rhs : Expr) { BinaryExprExpt.new(lhs, rhs) },
+        TokenType::EQUAL_AND     => ->(rhs : Expr) { BinaryExprAnd.new(lhs, rhs) },
+        TokenType::EQUAL_OR      => ->(rhs : Expr) { BinaryExprOr.new(lhs, rhs) },
+        TokenType::EQUAL_CONCAT  => ->(rhs : Expr) { BinaryExprConcat.new(lhs, rhs) },
+      }
+      token = current_token
+      unless map.has_key?(token.type)
+        raise Exception.new "Unexpected token #{token.type}: #{token.lexeme}, expected assignment operator"
+      end
+      assign_op = consume_token token.type
+      rhs = parse_expr
       consume_token TokenType::SEMICOLON
-      ObjectFieldAssignmentStatement.new obj_name_token.lexeme, field_name_token.lexeme, expr
+      map[token.type].call(rhs)
     end
 
     private def parse_return_statement

@@ -10,4 +10,9 @@ class Example {
 }
 
 var ob = Example(2, 3);
+ob.c = Example(4, 5);
+ob.c.d = Example(4, 5);
+ob.c.d.e = 9;
+ob.c.d.e *= 2;
+print("hello {ob.c.d.e}");
 print(ob.test(5, 7));

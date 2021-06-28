@@ -291,13 +291,37 @@ describe "FayrantLang Parser" do
     result.should eq expected
   end
 
+  it "should parse 'x += 2;'" do
+    tokens = Lexer.new("x += 2;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(VariableAssignmentStatement)
+    expected = VariableAssignmentStatement.new(
+      "x",
+      BinaryExprPlus.new(VariableExpr.new("x"), NumberLiteralExpr.new(2)),
+    )
+    result.should eq expected
+  end
+
   it "should parse 'this.x = 1 + 2;'" do
     tokens = Lexer.new("this.x = 1 + 2;").scan_tokens
     result = Parser.new(tokens).parse_program[0].as(ObjectFieldAssignmentStatement)
     expected = ObjectFieldAssignmentStatement.new(
-      "this",
+      VariableExpr.new("this"),
       "x",
       BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+    )
+    result.should eq expected
+  end
+
+  it "should parse 'this.x += 2;'" do
+    tokens = Lexer.new("this.x += 2;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ObjectFieldAssignmentStatement)
+    expected = ObjectFieldAssignmentStatement.new(
+      VariableExpr.new("this"),
+      "x",
+      BinaryExprPlus.new(
+        ObjectAccessExpr.new(VariableExpr.new("this"), "x"),
+        NumberLiteralExpr.new(2)
+      ),
     )
     result.should eq expected
   end
@@ -319,8 +343,8 @@ describe "FayrantLang Parser" do
       "TestClass",
       ["a", "b"],
       [
-        ObjectFieldAssignmentStatement.new("this", "x", VariableExpr.new("a")),
-        ObjectFieldAssignmentStatement.new("this", "y", VariableExpr.new("b")),
+        ObjectFieldAssignmentStatement.new(VariableExpr.new("this"), "x", VariableExpr.new("a")),
+        ObjectFieldAssignmentStatement.new(VariableExpr.new("this"), "y", VariableExpr.new("b")),
       ] of Statement,
       [
         FunctionDeclarationStatement.new("test", [] of String, [] of Statement),

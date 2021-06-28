@@ -145,21 +145,21 @@ module FayrantLang
     end
 
     class ObjectFieldAssignmentStatement < Statement
-      getter obj_name
+      getter obj_expr
       getter field_name
       getter expr
 
-      def initialize(@obj_name : String, @field_name : String, @expr : Expr)
+      def initialize(@obj_expr : Expr, @field_name : String, @expr : Expr)
       end
 
       def exec(ctx : Context) : {ExecResult, AnyValue}
-        obj = ctx.get_var(obj_name).get_object
+        obj = obj_expr.eval(ctx).get_object
         obj.set_field(field_name, expr.eval(ctx))
         none_result
       end
 
       def ==(other : ObjectFieldAssignmentStatement)
-        obj_name == other.obj_name && field_name == other.field_name && expr == other.expr
+        obj_expr == other.obj_expr && field_name == other.field_name && expr == other.expr
       end
     end
 
@@ -192,6 +192,16 @@ module FayrantLang
 
       def ==(other : ExprStatement)
         expr == other.expr
+      end
+    end
+
+    class EmptyStatement < Statement
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        none_result
+      end
+
+      def ==(other : EmptyStatement)
+        true
       end
     end
   end
