@@ -122,14 +122,38 @@ module FayrantLang
     getter fields
     getter uuid
 
-    def initialize(@classType : String)
+    def initialize(
+      @className : String,
+      @methods : Hash(String, FunctionDeclarationStatement),
+      @methods_ctx : Context
+    )
       super ValueType::Object
       @fields = Hash(String, AnyValue).new
       @uuid = UUID.random
     end
 
+    def get_field(name : String)
+      if fields.has_key?(name)
+        fields[name]
+      elsif @methods.has_key?(name)
+        method = @methods[name]
+        obj_fn = BuiltinFunction.new method.params.size do |args|
+          obj_ctx = Context.new @methods_ctx
+          fn = UserFunction.new method.params, method.body, obj_ctx
+          fn.call(args)
+        end
+        obj_fn
+      else
+        NullValue.new
+      end
+    end
+
+    def set_field(name : String, value : AnyValue)
+      fields[name] = value
+    end
+
     def to_string
-      "[object #{@classType}]"
+      "[object #{@className}]"
     end
 
     def get_object
@@ -191,15 +215,15 @@ module FayrantLang
     end
   end
 
-  class UserMethod < FunctionValue
-    def initialize(@this : ObjectValue, @params : Array(String), @body : Array(Object), @ctx : Context) # TODO
-      super params.size
-    end
+  # class UserMethod < FunctionValue
+  #   def initialize(@this : ObjectValue, @params : Array(String), @body : Array(Object), @ctx : Context) # TODO
+  #     super params.size
+  #   end
 
-    def call(args : Array(AnyValue)) : AnyValue
-      NullValue.new # TODO
-    end
-  end
+  #   def call(args : Array(AnyValue)) : AnyValue
+  #     NullValue.new # TODO
+  #   end
+  # end
 
   class BuiltinFunction < FunctionValue
     def initialize(arity : Int32, &body : Array(AnyValue) -> AnyValue)

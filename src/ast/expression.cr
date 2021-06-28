@@ -473,7 +473,7 @@ module FayrantLang
       end
 
       def eval(ctx : Context) : AnyValue
-        raise Exception.new "TODO"
+        obj.eval(ctx).get_object.get_field(field)
       end
 
       def ==(other : ObjectAccessExpr)

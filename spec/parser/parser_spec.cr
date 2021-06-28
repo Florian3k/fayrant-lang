@@ -280,4 +280,67 @@ describe "FayrantLang Parser" do
     )
     result.should eq expected
   end
+
+  it "should parse 'x = 1 + 2;'" do
+    tokens = Lexer.new("x = 1 + 2;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(VariableAssignmentStatement)
+    expected = VariableAssignmentStatement.new(
+      "x",
+      BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+    )
+    result.should eq expected
+  end
+
+  it "should parse 'this.x = 1 + 2;'" do
+    tokens = Lexer.new("this.x = 1 + 2;").scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ObjectFieldAssignmentStatement)
+    expected = ObjectFieldAssignmentStatement.new(
+      "this",
+      "x",
+      BinaryExprPlus.new(NumberLiteralExpr.new(1), NumberLiteralExpr.new(2)),
+    )
+    result.should eq expected
+  end
+
+  it "should parse class declaration" do
+    input = "class TestClass {     \n" \
+            "  constructor(a, b) { \n" \
+            "    this.x = a;       \n" \
+            "    this.y = b;       \n" \
+            "  }                   \n" \
+            "  func test() { }     \n" \
+            "  func test2(a, b) {  \n" \
+            "    return this.x * a;\n" \
+            "  }                   \n" \
+            "}                     \n"
+    tokens = Lexer.new(input).scan_tokens
+    result = Parser.new(tokens).parse_program[0].as(ClassDeclarationStatement)
+    expected = ClassDeclarationStatement.new(
+      "TestClass",
+      ["a", "b"],
+      [
+        ObjectFieldAssignmentStatement.new("this", "x", VariableExpr.new("a")),
+        ObjectFieldAssignmentStatement.new("this", "y", VariableExpr.new("b")),
+      ] of Statement,
+      [
+        FunctionDeclarationStatement.new("test", [] of String, [] of Statement),
+        FunctionDeclarationStatement.new(
+          "test2",
+          ["a", "b"],
+          [
+            ReturnStatement.new(
+              BinaryExprMult.new(
+                ObjectAccessExpr.new(
+                  VariableExpr.new("this"),
+                  "x"
+                ),
+                VariableExpr.new("a"),
+              )
+            ),
+          ] of Statement
+        ),
+      ]
+    )
+    result.should eq expected
+  end
 end

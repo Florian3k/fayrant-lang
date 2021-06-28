@@ -22,7 +22,7 @@ module FayrantLang
       when TokenType::FUNC
         parse_function_statement
       when TokenType::CLASS
-        raise Exception.new "TODO"
+        parse_class_statement
       when TokenType::IF
         parse_if_statement
       when TokenType::WHILE
@@ -38,26 +38,45 @@ module FayrantLang
       when TokenType::CONTINUE
         raise Exception.new "TODO"
       else
-        # TODO - assignment statement
-        parse_expr_statement
+        if current_token.type == TokenType::IDENTIFIER &&
+           @tokens[@index + 1].type == TokenType::EQUAL
+          parse_variable_assignment_statement
+        elsif current_token.type == TokenType::IDENTIFIER &&
+              @tokens[@index + 1].type == TokenType::DOT &&
+              @tokens[@index + 2].type == TokenType::IDENTIFIER &&
+              @tokens[@index + 3].type == TokenType::EQUAL
+          parse_object_field_assignment_statement
+        else
+          parse_expr_statement
+        end
       end
     end
 
     private def parse_function_statement
       consume_token TokenType::FUNC
       name_token = consume_token TokenType::IDENTIFIER
-      consume_token TokenType::L_PAREN
-      params = [] of Token
-      while current_token.type != TokenType::R_PAREN
-        params << consume_token TokenType::IDENTIFIER
-        if current_token.type == TokenType::R_PAREN
-          break
-        end
-        consume_token TokenType::COMMA
-      end
-      consume_token TokenType::R_PAREN
+      params = parse_params
       body = parse_body
-      FunctionDeclarationStatement.new name_token.lexeme, params.map { |param| param.lexeme }, body
+      FunctionDeclarationStatement.new name_token.lexeme, params, body
+    end
+
+    private def parse_class_statement
+      consume_token TokenType::CLASS
+      name_token = consume_token TokenType::IDENTIFIER
+      consume_token TokenType::L_BRACE
+
+      consume_token TokenType::CONSTRUCTOR
+      ctor_params = parse_params
+      ctor_body = parse_body
+
+      methods = [] of FunctionDeclarationStatement
+      while current_token.type != TokenType::R_BRACE
+        methods << parse_function_statement
+      end
+
+      consume_token TokenType::R_BRACE
+
+      ClassDeclarationStatement.new name_token.lexeme, ctor_params, ctor_body, methods
     end
 
     private def parse_if_statement
@@ -88,6 +107,24 @@ module FayrantLang
       VariableDeclarationStatement.new token.lexeme, expr
     end
 
+    private def parse_variable_assignment_statement
+      name_token = consume_token TokenType::IDENTIFIER
+      consume_token TokenType::EQUAL
+      expr = parse_expr
+      consume_token TokenType::SEMICOLON
+      VariableAssignmentStatement.new name_token.lexeme, expr
+    end
+
+    private def parse_object_field_assignment_statement
+      obj_name_token = consume_token TokenType::IDENTIFIER
+      consume_token TokenType::DOT
+      field_name_token = consume_token TokenType::IDENTIFIER
+      consume_token TokenType::EQUAL
+      expr = parse_expr
+      consume_token TokenType::SEMICOLON
+      ObjectFieldAssignmentStatement.new obj_name_token.lexeme, field_name_token.lexeme, expr
+    end
+
     private def parse_return_statement
       consume_token TokenType::RETURN
       expr = NullLiteralExpr.new
@@ -106,6 +143,20 @@ module FayrantLang
       end
       consume_token TokenType::R_BRACE
       statements
+    end
+
+    private def parse_params
+      consume_token TokenType::L_PAREN
+      params = [] of Token
+      while current_token.type != TokenType::R_PAREN
+        params << consume_token TokenType::IDENTIFIER
+        if current_token.type == TokenType::R_PAREN
+          break
+        end
+        consume_token TokenType::COMMA
+      end
+      consume_token TokenType::R_PAREN
+      params.map { |param| param.lexeme }
     end
 
     private def parse_expr_statement

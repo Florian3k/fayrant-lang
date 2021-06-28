@@ -47,6 +47,46 @@ module FayrantLang
       end
     end
 
+    class ClassDeclarationStatement < Statement
+      getter name
+      getter ctor_params
+      getter ctor_body
+      getter methods
+
+      def initialize(
+        @name : String,
+        @ctor_params : Array(String),
+        @ctor_body : Array(Statement),
+        @methods : Array(FunctionDeclarationStatement)
+      )
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        methods_hash = Hash(String, FunctionDeclarationStatement).new
+        methods.each do |method|
+          methods_hash[method.name] = method
+        end
+        class_fn = BuiltinFunction.new ctor_params.size do |args|
+          obj_ctx = Context.new ctx
+          obj = ObjectValue.new name, methods_hash, obj_ctx
+          obj_ctx.create_var("this", obj)
+          ctor = UserFunction.new ctor_params, ctor_body, obj_ctx
+          ctor.call(args)
+          obj
+        end
+
+        ctx.create_var name, class_fn
+        none_result
+      end
+
+      def ==(other : ClassDeclarationStatement)
+        name == other.name &&
+          ctor_params == other.ctor_params &&
+          ctor_body == other.ctor_body &&
+          methods == other.methods
+      end
+    end
+
     class IfStatement < Statement
       getter cond
       getter true_body
@@ -84,6 +124,42 @@ module FayrantLang
 
       def ==(other : VariableDeclarationStatement)
         name == other.name && expr == other.expr
+      end
+    end
+
+    class VariableAssignmentStatement < Statement
+      getter name
+      getter expr
+
+      def initialize(@name : String, @expr : Expr)
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        ctx.set_var(name, expr.eval(ctx))
+        none_result
+      end
+
+      def ==(other : VariableAssignmentStatement)
+        name == other.name && expr == other.expr
+      end
+    end
+
+    class ObjectFieldAssignmentStatement < Statement
+      getter obj_name
+      getter field_name
+      getter expr
+
+      def initialize(@obj_name : String, @field_name : String, @expr : Expr)
+      end
+
+      def exec(ctx : Context) : {ExecResult, AnyValue}
+        obj = ctx.get_var(obj_name).get_object
+        obj.set_field(field_name, expr.eval(ctx))
+        none_result
+      end
+
+      def ==(other : ObjectFieldAssignmentStatement)
+        obj_name == other.obj_name && field_name == other.field_name && expr == other.expr
       end
     end
 

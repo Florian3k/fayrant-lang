@@ -75,19 +75,21 @@ describe "FayrantLang Values" do
   end
 
   describe "ObjectValue" do
+    empty_methods = Hash(String, FunctionDeclarationStatement).new
+    empty_ctx = Context.new
     it ".get_object should return the object itself" do
-      obj = ObjectValue.new "SomeClass"
+      obj = ObjectValue.new "SomeClass", empty_methods, empty_ctx
       (obj.get_object == obj).should eq true
     end
 
     it ".type should return Object type" do
-      obj = ObjectValue.new "SomeClass"
+      obj = ObjectValue.new "SomeClass", empty_methods, empty_ctx
       obj.type.should eq ValueType::Object
     end
 
     it "Object should be equal only to itself" do
-      obj1 = ObjectValue.new "SomeClass"
-      obj2 = ObjectValue.new "SomeClass"
+      obj1 = ObjectValue.new "SomeClass", empty_methods, empty_ctx
+      obj2 = ObjectValue.new "SomeClass", empty_methods, empty_ctx
       (obj1 == obj1).should eq true
       (obj2 == obj2).should eq true
       (obj1 == obj2).should eq false
