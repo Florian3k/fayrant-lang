@@ -189,7 +189,7 @@ module FayrantLang
         @index += len
         @char_in_line += len
       else
-        raise Exception.new "Unexpected token #{@text[@index]} in line #{@line} at position #{@char_in_line}!"
+        raise SyntaxError.new "Unexpected token #{@text[@index]} in line #{@line} at position #{@char_in_line}!"
       end
     end
 
@@ -203,7 +203,7 @@ module FayrantLang
       while true
         if @index >= @text.size
           puts @tokens
-          raise Exception.new "Unexpected end of string at index #{@index}"
+          raise SyntaxError.new "Unexpected end of string at index #{@index}"
         end
         char = @text[@index]
 
@@ -220,7 +220,7 @@ module FayrantLang
         elsif char == '\\'
           @index += 1
           if @index >= @text.size
-            raise Exception.new "Unexpected end of string at #{@index} index!"
+            raise SyntaxError.new "Unexpected end of string at #{@index} index!"
           end
           char2 = @text[@index]
           map = {
@@ -235,7 +235,7 @@ module FayrantLang
             buffer = ""
             @index += 1
             if @text[@index] != '{'
-              raise Exception.new "Expected { after \\u at index #{@index}!"
+              raise SyntaxError.new "Expected { after \\u at index #{@index}!"
             end
             loop do
               @index += 1
@@ -254,10 +254,10 @@ module FayrantLang
           elsif map.has_key? char2
             str_frag += map[char2]
           else
-            raise Exception.new "Escaping #{char2} is not supported!"
+            raise SyntaxError.new "Escaping #{char2} is not supported!"
           end
         elsif char == '}'
-          raise Exception.new "Unexpected } at index #{@index}!"
+          raise SyntaxError.new "Unexpected } at index #{@index}!"
         else
           if char == "\n"
             @line += 1

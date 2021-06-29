@@ -4,10 +4,6 @@ require "../../src/parser/lexer.cr"
 include FayrantLang
 
 describe "FayrantLang Lexer" do
-  # TODO
-  # - add more tests
-  # - group and refactor them
-
   it "should tokenize 'var test = 2 + 3.14;'" do
     input = "var test = 2 + 3.14;"
     #        0123456789

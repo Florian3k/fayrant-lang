@@ -20,23 +20,23 @@ module FayrantLang
     abstract def to_string
 
     def get_boolean : Bool
-      raise ValueError.new ValueType::Boolean, @type
+      raise TypeError.new ValueType::Boolean, @type
     end
 
     def get_number : Float64
-      raise ValueError.new ValueType::Number, @type
+      raise TypeError.new ValueType::Number, @type
     end
 
     def get_string : String
-      raise ValueError.new ValueType::String, @type
+      raise TypeError.new ValueType::String, @type
     end
 
     def get_object : ObjectValue
-      raise ValueError.new ValueType::Object, @type
+      raise TypeError.new ValueType::Object, @type
     end
 
     def get_function : FunctionValue
-      raise ValueError.new ValueType::Function, @type
+      raise TypeError.new ValueType::Function, @type
     end
 
     def ==(other)
@@ -234,24 +234,14 @@ module FayrantLang
       when ExecResult::RETURN
         res[1]
       when ExecResult::BREAK
-        raise Exception.new "TODO - break is invalid outside of loop"
+        raise StatementError.new "break is not allowed outside of loop"
       when ExecResult::CONTINUE
-        raise Exception.new "TODO - continue is invalid outside of loop"
+        raise StatementError.new "continue is not allowed outside of loop"
       else
         raise Exception.new "UNREACHABLE CODE"
       end
     end
   end
-
-  # class UserMethod < FunctionValue
-  #   def initialize(@this : ObjectValue, @params : Array(String), @body : Array(Object), @ctx : Context) # TODO
-  #     super params.size
-  #   end
-
-  #   def call(args : Array(AnyValue)) : AnyValue
-  #     NullValue.new # TODO
-  #   end
-  # end
 
   class BuiltinFunction < FunctionValue
     def initialize(arity : Int32, &body : Array(AnyValue) -> AnyValue)

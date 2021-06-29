@@ -163,7 +163,7 @@ module FayrantLang
         rhs_expr = parse_assignment_statement_expr expr
         ObjectFieldAssignmentStatement.new expr.obj, expr.field, rhs_expr
       else
-        raise Exception.new "Expected semicolon or assignment operator!" # TODO
+        raise SyntaxError.new "Expected semicolon or assignment operator"
         EmptyStatement.new
       end
     end
@@ -184,7 +184,7 @@ module FayrantLang
       }
       token = current_token
       unless map.has_key?(token.type)
-        raise Exception.new "Unexpected token #{token.type}: #{token.lexeme}, expected assignment operator"
+        raise SyntaxError.new "Unexpected token #{token.type}: #{token.lexeme}, expected assignment operator"
       end
       assign_op = consume_token token.type
       rhs = parse_expr
@@ -455,8 +455,7 @@ module FayrantLang
       when TokenType::QUOTE
         parse_string
       else
-        # TODO
-        raise Exception.new "Unexpected token #{current_token.type}: #{current_token.lexeme} "
+        raise SyntaxError.new "Unexpected token #{current_token.type}: #{current_token.lexeme} "
       end
     end
 
@@ -473,8 +472,7 @@ module FayrantLang
           fragments << StringInterpolationFragment.new parse_expr
           consume_token TokenType::R_BRACE
         else
-          # TODO
-          raise Exception.new "Unexpected token #{current_token.type}: #{current_token.lexeme} "
+          raise SyntaxError.new "Unexpected token #{current_token.type}: #{current_token.lexeme} "
         end
       end
       consume_token TokenType::QUOTE
@@ -491,12 +489,12 @@ module FayrantLang
 
     private def consume_token(tt : TokenType)
       if eof
-        raise Exception.new "Unexpected end of input, expected #{tt}"
+        raise SyntaxError.new "Unexpected end of input, expected #{tt}"
       elsif @tokens[@index].type == tt
         @index += 1
         return @tokens[@index - 1]
       else
-        raise Exception.new "Unexpected token #{current_token.type}: #{current_token.lexeme}, expected #{tt}"
+        raise SyntaxError.new "Unexpected token #{current_token.type}: #{current_token.lexeme}, expected #{tt}"
       end
     end
   end

@@ -257,8 +257,7 @@ module FayrantLang
         unless rval == 0
           NumberValue.new @lhs.eval(ctx).get_number / rval
         else
-          # TODO
-          raise Exception.new "TODO"
+          raise ArithmeticError.new "Division by 0"
         end
       end
 
@@ -277,8 +276,7 @@ module FayrantLang
         unless lval == 0
           NumberValue.new @rhs.eval(ctx).get_number / lval
         else
-          # TODO
-          raise Exception.new "TODO"
+          raise ArithmeticError.new "Division by 0"
         end
       end
 
@@ -297,7 +295,7 @@ module FayrantLang
         unless rval == 0
           NumberValue.new @lhs.eval(ctx).get_number % rval
         else
-          raise Exception.new "TODO"
+          raise ArithmeticError.new "Division by 0"
         end
       end
 
@@ -446,8 +444,6 @@ module FayrantLang
         lhs == other.lhs && rhs == other.rhs
       end
     end
-
-    # TODO: VALIDATE THE CODE AND WRITE TESTS!
 
     class FunctionCallExpr < Expr
       getter fn

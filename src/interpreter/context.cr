@@ -12,7 +12,7 @@ module FayrantLang
       elsif ctx = @parentContext
         ctx.get_var name
       else
-        raise Exception.new "TODO - undefined variable #{name}"
+        raise UndefinedVarError.new name
       end
     end
 
@@ -22,13 +22,13 @@ module FayrantLang
       elsif ctx = @parentContext
         ctx.set_var name, value
       else
-        raise Exception.new "TODO - undefined variable #{name}"
+        raise UndefinedVarError.new name
       end
     end
 
     def create_var(name : String, value : AnyValue)
       if @vars.has_key?(name)
-        raise Exception.new "TODO - #{name} variable already defined in current scope"
+        raise DefinedVarError.new name
       else
         @vars[name] = value
       end

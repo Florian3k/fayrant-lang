@@ -5,24 +5,24 @@ include FayrantLang
 
 describe "FayrantLang Values" do
   describe "NullValue" do
-    it ".get* should throw ValueError" do
-      expect_raises(ValueError, "ValueError: expected type Boolean, instead got Null") do
+    it ".get* should throw TypeError" do
+      expect_raises(TypeError, "TypeError: expected type Boolean, instead got Null") do
         NullValue.new.get_boolean
       end
 
-      expect_raises(ValueError, "ValueError: expected type Number, instead got Null") do
+      expect_raises(TypeError, "TypeError: expected type Number, instead got Null") do
         NullValue.new.get_number
       end
 
-      expect_raises(ValueError, "ValueError: expected type String, instead got Null") do
+      expect_raises(TypeError, "TypeError: expected type String, instead got Null") do
         NullValue.new.get_string
       end
 
-      expect_raises(ValueError, "ValueError: expected type Object, instead got Null") do
+      expect_raises(TypeError, "TypeError: expected type Object, instead got Null") do
         NullValue.new.get_object
       end
 
-      expect_raises(ValueError, "ValueError: expected type Function, instead got Null") do
+      expect_raises(TypeError, "TypeError: expected type Function, instead got Null") do
         NullValue.new.get_function
       end
     end
@@ -42,8 +42,8 @@ describe "FayrantLang Values" do
       bool.type.should eq ValueType::Boolean
     end
 
-    it ".get_number should throw ValueError" do
-      expect_raises(ValueError, "ValueError: expected type Number, instead got Boolean") do
+    it ".get_number should throw TypeError" do
+      expect_raises(TypeError, "TypeError: expected type Number, instead got Boolean") do
         bool = BooleanValue.new true
         bool.get_number
       end
