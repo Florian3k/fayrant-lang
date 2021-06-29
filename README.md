@@ -6,23 +6,6 @@ Authors:
 - Paweł Karaś [@Ph0enixKM](https://github.com/Ph0enixKM)
 - Maciej Witkowski [@MaciejWitkowskiDev](https://github.com/MaciejWitkowskiDev)
 
-## Work progress / TODO
-- [x] Lexer - 100% done
-- [ ] AST
-  - [ ] Statement - 90% done
-    - [ ] For loop, while loop
-    - [ ] Assignments
-  - [x] Expr - 100% done
-- [ ] Parser - 90% done
-  - [ ] Statement parser
-  - [x] Expr parser
-- [ ] builtin classes/functions - 0% done
-  - [x] input / print
-  - [ ] Array
-  - [ ] Dict
-  - [ ] File (?)
-  - [ ] Math object (?)
-
 ## Basic syntax
 
 ```=
