@@ -169,6 +169,10 @@ module FayrantLang
       elsif char == '~'
         while char != '\n'
           @index += 1
+          if @index >= @text.size
+            break
+          end
+          char = @text[@index]
           @char_in_line += 1
         end
         @index += 1
