@@ -102,7 +102,8 @@ module FayrantLang
           else
             false_body
           end
-        exec_body body, ctx
+        inner_ctx = Context.new ctx
+        exec_body body, inner_ctx
       end
 
       def ==(other : IfStatement)
