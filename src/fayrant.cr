@@ -24,10 +24,18 @@ def initial_context
         StringValue.new str
       end,
     },
+    {
+      "Array",
+      BuiltinFunction.new -1 do |args|
+        ArrayObjectValue.new args
+      end,
+    },
   ]
+
   initial_vars.each do |name_var|
     ctx.create_var(name_var[0], name_var[1])
   end
+
   ctx
 end
 

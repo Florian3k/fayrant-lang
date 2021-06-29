@@ -128,6 +128,7 @@ module FayrantLang
       @methods_ctx : Context
     )
       super ValueType::Object
+      @native_methods = Hash(String, BuiltinFunction).new
       @fields = Hash(String, AnyValue).new
       @uuid = UUID.random
     end
@@ -135,6 +136,8 @@ module FayrantLang
     def get_field(name : String)
       if fields.has_key?(name)
         fields[name]
+      elsif @native_methods.has_key?(name)
+        @native_methods[name]
       elsif @methods.has_key?(name)
         method = @methods[name]
         obj_fn = BuiltinFunction.new method.params.size do |args|
@@ -162,6 +165,31 @@ module FayrantLang
 
     def ==(other : ObjectValue)
       uuid == other.uuid
+    end
+  end
+
+  class ArrayObjectValue < ObjectValue
+    def initialize(@array : Array(AnyValue))
+      super "Array", Hash(String, FunctionDeclarationStatement).new, Context.new
+      @native_methods = {
+        "size" => BuiltinFunction.new 0 do |args|
+          NumberValue.new @array.size.to_f
+        end,
+        "get" => BuiltinFunction.new 1 do |args|
+          array[args[0].get_number.to_i]
+        end,
+        "set" => BuiltinFunction.new 2 do |args|
+          array[args[0].get_number.to_i] = args[1]
+          NullValue.new
+        end,
+        "push" => BuiltinFunction.new 1 do |args|
+          array.push(args[0])
+          NullValue.new
+        end,
+        "pop" => BuiltinFunction.new 0 do |args|
+          array.pop
+        end,
+      }
     end
   end
 
