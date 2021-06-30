@@ -177,4 +177,4 @@ print("{v1.str()} + {v2.str()} = {v2.str()}")
 ### Why Fayrant name?
 It's a tribute to this outstanding beverage
 
-![](https://i.imgur.com/pPNhVlB.png)
+![](https://i.imgur.com/7Ni6osS.png)
