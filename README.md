@@ -1,4 +1,4 @@
-# Fayrant-lang
+# 🎩 Fayrant-lang
 ### Simple, interpreted, dynamically-typed programming language
 
 Authors:
