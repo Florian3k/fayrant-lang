@@ -1,17 +1,17 @@
 require "spec"
 require "../src/value.cr"
 
-include FayrantLang
+include PwoPlusPlus
 
-describe "FayrantLang Values" do
+describe "PwoPlusPlus Values" do
   describe "NullValue" do
     it ".get* should throw TypeError" do
       expect_raises(TypeError, "TypeError: expected type Boolean, instead got Null") do
         NullValue.new.get_boolean
       end
 
-      expect_raises(TypeError, "TypeError: expected type Number, instead got Null") do
-        NullValue.new.get_number
+      expect_raises(TypeError, "TypeError: expected type F64, instead got Null") do
+        NullValue.new.get_f64
       end
 
       expect_raises(TypeError, "TypeError: expected type String, instead got Null") do
@@ -42,23 +42,23 @@ describe "FayrantLang Values" do
       bool.type.should eq ValueType::Boolean
     end
 
-    it ".get_number should throw TypeError" do
-      expect_raises(TypeError, "TypeError: expected type Number, instead got Boolean") do
+    it ".get_f64 should throw TypeError" do
+      expect_raises(TypeError, "TypeError: expected type F64, instead got Boolean") do
         bool = BooleanValue.new true
-        bool.get_number
+        bool.get_f64
       end
     end
   end
 
-  describe "NumberValue" do
-    it ".get_number should return given number" do
-      num = NumberValue.new 7
-      num.get_number.should eq 7
+  describe "F64Value" do
+    it ".get_f64 should return given F64" do
+      num = F64Value.new 7
+      num.get_f64.should eq 7
     end
 
-    it ".type should return Number type" do
-      num = NumberValue.new 7
-      num.type.should eq ValueType::Number
+    it ".type should return F64 type" do
+      num = F64Value.new 7
+      num.type.should eq ValueType::F64
     end
   end
 
@@ -118,16 +118,16 @@ describe "FayrantLang Values" do
 
     it ".call should return correct value" do
       fn = BuiltinFunction.new 1 do |args|
-        NumberValue.new(args[0].get_number + 7)
+        F64Value.new(args[0].get_f64 + 7)
       end
-      ret = fn.call([NumberValue.new 6] of AnyValue)
-      (ret == NumberValue.new 13).should eq true
-      (ret == NumberValue.new 14).should eq false
+      ret = fn.call([F64Value.new 6] of AnyValue)
+      (ret == F64Value.new 13).should eq true
+      (ret == F64Value.new 14).should eq false
     end
 
     it ".call should throw on arity mismatch" do
       fn = BuiltinFunction.new 1 do |args|
-        NumberValue.new(args[0].get_number + 7)
+        F64Value.new(args[0].get_f64 + 7)
       end
       expect_raises(ArityMismatchError, "ArityMismatchError: expected 1 arguments, instead got 0") do
         ret = fn.call([] of AnyValue)

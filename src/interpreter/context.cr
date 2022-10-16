@@ -1,6 +1,6 @@
 require "../value.cr"
 
-module FayrantLang
+module PwoPlusPlus
   class Context
     def initialize(@parentContext : Context | Nil = nil)
       @vars = Hash(String, AnyValue).new

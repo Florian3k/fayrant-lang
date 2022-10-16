@@ -1,9 +1,9 @@
 require "spec"
 require "../../src/parser/lexer.cr"
 
-include FayrantLang
+include PwoPlusPlus
 
-describe "FayrantLang Lexer" do
+describe "PwoPlusPlus Lexer" do
   it "should tokenize 'var test = 2 + 3.14;'" do
     input = "var test = 2 + 3.14;"
     #        0123456789

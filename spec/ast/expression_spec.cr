@@ -2,10 +2,10 @@ require "spec"
 require "../../src/ast/expression.cr"
 require "../../src/interpreter/context.cr"
 
-include FayrantLang
+include PwoPlusPlus
 include AST
 
-describe "FayrantLang::AST Expressions" do
+describe "PwoPlusPlus::AST Expressions" do
   describe "LiteralExpr" do
     describe "BooleanLiteralExpr" do
       it "two BooleanLiteralExpr should be comparable" do
@@ -45,13 +45,13 @@ describe "FayrantLang::AST Expressions" do
         ex4.should eq ex4
       end
 
-      it "NumberLiteralExpr should evaluate to NumberValue" do
+      it "NumberLiteralExpr should evaluate to F64Value" do
         ex1 = NumberLiteralExpr.new 3
         ex2 = NumberLiteralExpr.new 7
 
-        ex1.eval(Context.new).should eq NumberValue.new 3
-        ex1.eval(Context.new).should_not eq NumberValue.new 7
-        ex2.eval(Context.new).should eq NumberValue.new 7
+        ex1.eval(Context.new).should eq F64Value.new 3
+        ex1.eval(Context.new).should_not eq F64Value.new 7
+        ex2.eval(Context.new).should eq F64Value.new 7
       end
     end
 

@@ -1,6 +1,6 @@
 require "./expression.cr"
 
-module FayrantLang
+module PwoPlusPlus
   module AST
     enum ExecResult
       NONE

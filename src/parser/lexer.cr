@@ -1,6 +1,6 @@
 require "./token.cr"
 
-module FayrantLang
+module PwoPlusPlus
   class Lexer
     @@regexes : Array(Tuple(Regex, TokenType)) = [
       {

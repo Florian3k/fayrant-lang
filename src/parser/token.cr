@@ -1,4 +1,4 @@
-module FayrantLang
+module PwoPlusPlus
   enum TokenType
     FUNC
     CLASS

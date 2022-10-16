@@ -1,6 +1,6 @@
 require "../value.cr"
 
-module FayrantLang
+module PwoPlusPlus
   module AST
     abstract class Expr
       abstract def eval(ctx : Context) : AnyValue
@@ -36,8 +36,8 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        NumberValue.new @value
+      def eval(ctx : Context) : F64Value
+        F64Value.new @value
       end
     end
 
@@ -131,8 +131,20 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        NumberValue.new -@expr.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @expr.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new -val.get_i32
+        when ValueType::I64
+          I64Value.new -val.get_i64
+        when ValueType::F32
+          F32Value.new -val.get_f32
+        when ValueType::F64
+          F64Value.new -val.get_f64
+        else
+          NullValue.new
+        end
       end
 
       def ==(other : UnaryExprMinus)
@@ -176,14 +188,14 @@ module FayrantLang
       def eval(ctx : Context) : AnyValue
         val = @expr.eval(ctx)
         case val.type
-        when ValueType::Number
-          NumberValue.new val.get_number
+        # when ValueType::Number
+        #   NumberValue.new val.get_number
         when ValueType::Boolean
-          NumberValue.new val.get_boolean ? 1.0 : 0.0
+          F64Value.new val.get_boolean ? 1.0 : 0.0
         when ValueType::String
           val = val.get_string.to_f64?
           if val.is_a?(Float64)
-            NumberValue.new val
+            F64Value.new val
           else
             NullValue.new
           end
@@ -210,8 +222,21 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        NumberValue.new @lhs.eval(ctx).get_number + @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new val.get_i32 + rval.get_i32
+        when ValueType::I64
+          I64Value.new val.get_i64 + rval.get_i64
+        when ValueType::F32
+          F32Value.new val.get_f32 + rval.get_f32
+        when ValueType::F64
+          F64Value.new val.get_f64 + rval.get_f64
+        else
+          NullValue.new
+        end
       end
 
       def ==(other : BinaryExprPlus)
@@ -224,8 +249,21 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        NumberValue.new @lhs.eval(ctx).get_number - @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new val.get_i32 - rval.get_i32
+        when ValueType::I64
+          I64Value.new val.get_i64 - rval.get_i64
+        when ValueType::F32
+          F32Value.new val.get_f32 - rval.get_f32
+        when ValueType::F64
+          F64Value.new val.get_f64 - rval.get_f64
+        else
+          NullValue.new
+        end
       end
 
       def ==(other : BinaryExprMinus)
@@ -238,8 +276,21 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        NumberValue.new @lhs.eval(ctx).get_number * @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new val.get_i32 * rval.get_i32
+        when ValueType::I64
+          I64Value.new val.get_i64 * rval.get_i64
+        when ValueType::F32
+          F32Value.new val.get_f32 * rval.get_f32
+        when ValueType::F64
+          F64Value.new val.get_f64 * rval.get_f64
+        else
+          NullValue.new
+        end
       end
 
       def ==(other : BinaryExprMult)
@@ -252,13 +303,28 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        rval = @rhs.eval(ctx).get_number
-        unless rval == 0
-          NumberValue.new @lhs.eval(ctx).get_number / rval
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new (val.get_i32 / rval.get_i32).to_i32
+        when ValueType::I64
+          I64Value.new (val.get_i64 / rval.get_i64).to_i64
+        when ValueType::F32
+          F32Value.new val.get_f32 / rval.get_f32
+        when ValueType::F64
+          F64Value.new val.get_f64 / rval.get_f64
         else
-          raise ArithmeticError.new "Division by 0"
+          NullValue.new
         end
+
+        # rval = @rhs.eval(ctx).get_number
+        # unless rval == 0
+        #   NumberValue.new @lhs.eval(ctx).get_number / rval
+        # else
+        #   raise ArithmeticError.new "Division by 0"
+        # end
       end
 
       def ==(other : BinaryExprDiv)
@@ -271,13 +337,28 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        lval = @lhs.eval(ctx).get_number
-        unless lval == 0
-          NumberValue.new @rhs.eval(ctx).get_number / lval
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new (rval.get_i32 / val.get_i32).to_i32
+        when ValueType::I64
+          I64Value.new (rval.get_i64 / val.get_i64).to_i64
+        when ValueType::F32
+          F32Value.new rval.get_f32 / val.get_f32
+        when ValueType::F64
+          F64Value.new rval.get_f64 / val.get_f64
         else
-          raise ArithmeticError.new "Division by 0"
+          NullValue.new
         end
+
+        # lval = @lhs.eval(ctx).get_number
+        # unless lval == 0
+        #   NumberValue.new @rhs.eval(ctx).get_number / lval
+        # else
+        #   raise ArithmeticError.new "Division by 0"
+        # end
       end
 
       def ==(other : BinaryExprDivInv)
@@ -290,13 +371,28 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
-        rval = @rhs.eval(ctx).get_number
-        unless rval == 0
-          NumberValue.new @lhs.eval(ctx).get_number % rval
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new val.get_i32 % rval.get_i32
+        when ValueType::I64
+          I64Value.new val.get_i64 % rval.get_i64
+        when ValueType::F32
+          F32Value.new val.get_f32 % rval.get_f32
+        when ValueType::F64
+          F64Value.new val.get_f64 % rval.get_f64
         else
-          raise ArithmeticError.new "Division by 0"
+          NullValue.new
         end
+
+        # rval = @rhs.eval(ctx).get_number
+        # unless rval == 0
+        #   NumberValue.new @lhs.eval(ctx).get_number % rval
+        # else
+        #   raise ArithmeticError.new "Division by 0"
+        # end
       end
 
       def ==(other : BinaryExprMod)
@@ -309,9 +405,24 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : NumberValue
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          I32Value.new val.get_i32 ** rval.get_i32
+        when ValueType::I64
+          I64Value.new val.get_i64 ** rval.get_i64
+        when ValueType::F32
+          F32Value.new val.get_f32 ** rval.get_f32
+        when ValueType::F64
+          F64Value.new val.get_f64 ** rval.get_f64
+        else
+          NullValue.new
+        end
+
         # TODO check for exceptions
-        NumberValue.new @lhs.eval(ctx).get_number ** @rhs.eval(ctx).get_number
+        # NumberValue.new @lhs.eval(ctx).get_number ** @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprExpt)
@@ -352,8 +463,23 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).get_number > @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          BooleanValue.new val.get_i32 > rval.get_i32
+        when ValueType::I64
+          BooleanValue.new val.get_i64 > rval.get_i64
+        when ValueType::F32
+          BooleanValue.new val.get_f32 > rval.get_f32
+        when ValueType::F64
+          BooleanValue.new val.get_f64 > rval.get_f64
+        else
+          NullValue.new
+        end
+
+        # BooleanValue.new @lhs.eval(ctx).get_number > @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprGt)
@@ -366,8 +492,23 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).get_number < @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          BooleanValue.new val.get_i32 < rval.get_i32
+        when ValueType::I64
+          BooleanValue.new val.get_i64 < rval.get_i64
+        when ValueType::F32
+          BooleanValue.new val.get_f32 < rval.get_f32
+        when ValueType::F64
+          BooleanValue.new val.get_f64 < rval.get_f64
+        else
+          NullValue.new
+        end
+
+        # BooleanValue.new @lhs.eval(ctx).get_number < @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprLt)
@@ -380,8 +521,23 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).get_number >= @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          BooleanValue.new val.get_i32 >= rval.get_i32
+        when ValueType::I64
+          BooleanValue.new val.get_i64 >= rval.get_i64
+        when ValueType::F32
+          BooleanValue.new val.get_f32 >= rval.get_f32
+        when ValueType::F64
+          BooleanValue.new val.get_f64 >= rval.get_f64
+        else
+          NullValue.new
+        end
+
+        # BooleanValue.new @lhs.eval(ctx).get_number >= @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprGe)
@@ -394,8 +550,23 @@ module FayrantLang
         super
       end
 
-      def eval(ctx : Context) : BooleanValue
-        BooleanValue.new @lhs.eval(ctx).get_number <= @rhs.eval(ctx).get_number
+      def eval(ctx : Context) : AnyValue
+        val = @lhs.eval(ctx)
+        rval = @rhs.eval(ctx)
+        case val.type
+        when ValueType::I32
+          BooleanValue.new val.get_i32 <= rval.get_i32
+        when ValueType::I64
+          BooleanValue.new val.get_i64 <= rval.get_i64
+        when ValueType::F32
+          BooleanValue.new val.get_f32 <= rval.get_f32
+        when ValueType::F64
+          BooleanValue.new val.get_f64 <= rval.get_f64
+        else
+          NullValue.new
+        end
+
+        # BooleanValue.new @lhs.eval(ctx).get_number <= @rhs.eval(ctx).get_number
       end
 
       def ==(other : BinaryExprLe)
@@ -447,17 +618,17 @@ module FayrantLang
 
     class FunctionCallExpr < Expr
       getter fn
-      getter args
+      getter arhs
 
-      def initialize(@fn : Expr, @args : Array(Expr))
+      def initialize(@fn : Expr, @arhs : Array(Expr))
       end
 
       def eval(ctx : Context) : AnyValue
-        fn.eval(ctx).get_function.call(args.map { |expr| expr.eval(ctx) })
+        fn.eval(ctx).get_function.call(arhs.map { |expr| expr.eval(ctx) })
       end
 
       def ==(other : FunctionCallExpr)
-        fn == other.fn && args == other.args
+        fn == other.fn && arhs == other.arhs
       end
     end
 

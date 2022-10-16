@@ -1,11 +1,14 @@
 require "uuid"
 require "./exceptions"
 
-module FayrantLang
+module PwoPlusPlus
   enum ValueType
     Null
     Boolean
-    Number
+    I32
+    I64
+    F32
+    F64
     String
     Object
     Function
@@ -23,8 +26,20 @@ module FayrantLang
       raise TypeError.new ValueType::Boolean, @type
     end
 
-    def get_number : Float64
-      raise TypeError.new ValueType::Number, @type
+    def get_i32 : Int32
+      raise TypeError.new ValueType::I32, @type
+    end
+
+    def get_i64 : Int64
+      raise TypeError.new ValueType::I64, @type
+    end
+
+    def get_f32 : Float32
+      raise TypeError.new ValueType::F32, @type
+    end
+
+    def get_f64 : Float64
+      raise TypeError.new ValueType::F64, @type
     end
 
     def get_string : String
@@ -78,22 +93,82 @@ module FayrantLang
     end
   end
 
-  class NumberValue < AnyValue
+  class I32Value < AnyValue
     getter value
 
-    def initialize(@value : Float64)
-      super ValueType::Number
+    def initialize(@value : Int32)
+      super ValueType::I32
     end
 
     def to_string
       @value.to_s
     end
 
-    def get_number
+    def get_i32
       @value
     end
 
-    def ==(other : NumberValue)
+    def ==(other : I32Value)
+      @value == other.value
+    end
+  end
+
+  class I64Value < AnyValue
+    getter value
+
+    def initialize(@value : Int64)
+      super ValueType::I64
+    end
+
+    def to_string
+      @value.to_s
+    end
+
+    def get_i64
+      @value
+    end
+
+    def ==(other : I64Value)
+      @value == other.value
+    end
+  end
+
+  class F32Value < AnyValue
+    getter value
+
+    def initialize(@value : Float32)
+      super ValueType::F32
+    end
+
+    def to_string
+      @value.to_s
+    end
+
+    def get_f32
+      @value
+    end
+
+    def ==(other : F32Value)
+      @value == other.value
+    end
+  end
+
+  class F64Value < AnyValue
+    getter value
+
+    def initialize(@value : Float64)
+      super ValueType::F64
+    end
+
+    def to_string
+      @value.to_s
+    end
+
+    def get_f64
+      @value
+    end
+
+    def ==(other : F64Value)
       @value == other.value
     end
   end
@@ -173,13 +248,13 @@ module FayrantLang
       super "Array", Hash(String, FunctionDeclarationStatement).new, Context.new
       @native_methods = {
         "size" => BuiltinFunction.new 0 do |args|
-          NumberValue.new @array.size.to_f
+          I32Value.new @array.size
         end,
         "get" => BuiltinFunction.new 1 do |args|
-          array[args[0].get_number.to_i]
+          array[args[0].get_i32]
         end,
         "set" => BuiltinFunction.new 2 do |args|
-          array[args[0].get_number.to_i] = args[1]
+          array[args[0].get_i32] = args[1]
           NullValue.new
         end,
         "push" => BuiltinFunction.new 1 do |args|

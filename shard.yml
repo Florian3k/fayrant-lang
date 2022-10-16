@@ -1,14 +1,9 @@
-name: fayrant-lang
+name: pwo-plus-plus
 version: 0.1.0
 
-authors:
-  - Florian3k
-  - MaciejWitkowskiDev
-  - Ph0enixKM
-
 targets:
-  fayrant:
-    main: src/fayrant.cr
+  pwo++:
+    main: src/pwo.cr
 
 crystal: 1.0.0
 

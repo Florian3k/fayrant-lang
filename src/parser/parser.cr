@@ -1,7 +1,7 @@
 require "../ast/expression.cr"
 require "../ast/statement.cr"
 
-module FayrantLang
+module PwoPlusPlus
   include AST
 
   class Parser

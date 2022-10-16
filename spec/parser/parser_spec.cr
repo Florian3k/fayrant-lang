@@ -2,9 +2,9 @@ require "spec"
 require "../../src/parser/parser.cr"
 require "../../src/parser/lexer.cr"
 
-include FayrantLang
+include PwoPlusPlus
 
-describe "FayrantLang Parser" do
+describe "PwoPlusPlus Parser" do
   it "should parse '2 + 3 / 4;'" do
     tokens = Lexer.new("2 + 3 / 4;").scan_tokens
     result = Parser.new(tokens).parse_program[0].as(ExprStatement).expr

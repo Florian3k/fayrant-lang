@@ -1,6 +1,6 @@
 require "./value.cr"
 
-module FayrantLang
+module PwoPlusPlus
   class SyntaxError < Exception
     def initialize(reason : String)
       super reason
