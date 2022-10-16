@@ -152,6 +152,20 @@ def initial_context
         end
       end,
     },
+    {
+      "log",
+      BuiltinFunction.new 1 do |args|
+        val = args[0]
+        case val.type
+        when ValueType::F32
+          F32Value.new Math.log val.get_f32
+        when ValueType::F64
+          F64Value.new Math.log val.get_f64
+        else
+          NullValue.new
+        end
+      end,
+    },
   ]
 
   initial_vars.each do |name_var|
