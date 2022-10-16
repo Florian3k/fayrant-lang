@@ -166,6 +166,12 @@ def initial_context
         end
       end,
     },
+    {
+      "CONST_PI", F64Value.new Math::PI
+    },
+    {
+      "CONST_E", F64Value.new Math::E
+    },
   ]
 
   initial_vars.each do |name_var|
